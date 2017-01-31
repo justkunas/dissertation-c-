@@ -1,0 +1,9 @@
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\bin\Debug\Testing.exe.config
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\bin\Debug\Testing.exe
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\bin\Debug\Testing.pdb
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\obj\Debug\Testing.csprojResolveAssemblyReference.cache
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\obj\Debug\Testing.MainScreen.resources
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\obj\Debug\Testing.Properties.Resources.resources
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\obj\Debug\Testing.csproj.GenerateResource.Cache
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\obj\Debug\Testing.exe
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\obj\Debug\Testing.pdb

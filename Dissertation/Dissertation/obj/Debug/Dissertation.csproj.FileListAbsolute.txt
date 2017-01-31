@@ -1,0 +1,5 @@
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\bin\Debug\Testing.exe.config
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\obj\Debug\Testing.exe
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\obj\Debug\Testing.pdb
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\bin\Debug\Dissertation.exe.config
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Dissertation\bin\Debug\Dissertation.exe.config
