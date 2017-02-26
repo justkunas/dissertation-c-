@@ -45,7 +45,7 @@
             // 
             // load
             // 
-            this.load.Location = new System.Drawing.Point(597, 434);
+            this.load.Location = new System.Drawing.Point(45, 440);
             this.load.Name = "load";
             this.load.Size = new System.Drawing.Size(79, 31);
             this.load.TabIndex = 1;
@@ -55,7 +55,7 @@
             // 
             // img
             // 
-            this.img.Location = new System.Drawing.Point(543, 269);
+            this.img.Location = new System.Drawing.Point(12, 269);
             this.img.Name = "img";
             this.img.Size = new System.Drawing.Size(177, 159);
             this.img.TabIndex = 2;
@@ -65,12 +65,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1246, 483);
+            this.ClientSize = new System.Drawing.Size(217, 483);
             this.Controls.Add(this.img);
             this.Controls.Add(this.load);
             this.Controls.Add(this.display);
             this.Name = "MainScreen";
             this.Text = "Main Screen";
+            this.Load += new System.EventHandler(this.MainScreen_Load);
             ((System.ComponentModel.ISupportInitialize)(this.img)).EndInit();
             this.ResumeLayout(false);
 

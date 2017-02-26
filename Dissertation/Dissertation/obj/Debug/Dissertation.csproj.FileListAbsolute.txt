@@ -3,3 +3,12 @@ C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\ob
 C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\obj\Debug\Testing.pdb
 C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Testing\bin\Debug\Dissertation.exe.config
 C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\01\Testing\Dissertation\bin\Debug\Dissertation.exe.config
+C:\Users\Justin\Documents\Projects\VisualStudio\Dissertation\dissertation\Dissertation\Dissertation\bin\Debug\Dissertation.exe.config
+C:\Users\Justin\Documents\Projects\VisualStudio\Dissertation\dissertation\Dissertation\Dissertation\bin\Debug\Dissertation.exe
+C:\Users\Justin\Documents\Projects\VisualStudio\Dissertation\dissertation\Dissertation\Dissertation\bin\Debug\Dissertation.pdb
+C:\Users\Justin\Documents\Projects\VisualStudio\Dissertation\dissertation\Dissertation\Dissertation\obj\Debug\Dissertation.csprojResolveAssemblyReference.cache
+C:\Users\Justin\Documents\Projects\VisualStudio\Dissertation\dissertation\Dissertation\Dissertation\obj\Debug\Testing.MainScreen.resources
+C:\Users\Justin\Documents\Projects\VisualStudio\Dissertation\dissertation\Dissertation\Dissertation\obj\Debug\Dissertation.Properties.Resources.resources
+C:\Users\Justin\Documents\Projects\VisualStudio\Dissertation\dissertation\Dissertation\Dissertation\obj\Debug\Dissertation.csproj.GenerateResource.Cache
+C:\Users\Justin\Documents\Projects\VisualStudio\Dissertation\dissertation\Dissertation\Dissertation\obj\Debug\Dissertation.exe
+C:\Users\Justin\Documents\Projects\VisualStudio\Dissertation\dissertation\Dissertation\Dissertation\obj\Debug\Dissertation.pdb
