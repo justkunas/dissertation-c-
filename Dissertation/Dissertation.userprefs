@@ -1,0 +1,17 @@
+﻿<Properties StartupConfiguration="{5910DD08-FA39-464B-A319-34B50D0BEEB2}|Default">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Dissertation\Book.cs">
+    <Files>
+      <File FileName="Dissertation\Book.cs" Line="218" Column="54" />
+      <File FileName="Dissertation\MainScreen.cs" Line="27" Column="46" />
+      <File FileName="Dissertation\Searching\SearchEngine.cs" Line="174" Column="8" />
+      <File FileName="Dissertation\Searching\SearchThread.cs" Line="28" Column="4" />
+      <File FileName="Dissertation\FileChecking.cs" Line="5" Column="18" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.Dissertation PreferredExecutionTarget="MonoDevelop.Default" />
+</Properties>

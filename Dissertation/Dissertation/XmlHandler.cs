@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Dissertation;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Dissertation
 {
@@ -12,7 +15,7 @@ namespace Dissertation
 
         public XmlHandler()
         {
-
+            books = new HashSet<Book>();
         }
 
     }
