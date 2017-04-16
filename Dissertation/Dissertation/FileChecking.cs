@@ -11,7 +11,7 @@ namespace Dissertation
     {
         public static void checkForAllSpecifics()
         {
-            string[] xmlToFind = { "subjects", "places", "characters", "series", "browseNodes" };
+            string[] xmlToFind = { "dimensions" };
             string[] folders = { "C:\\Users\\Justkunas\\Documents\\Amazon Books\\xml\\999" };
             string[] files;
             HashSet<string> complete = new HashSet<string>();
@@ -76,7 +76,7 @@ namespace Dissertation
         }
         public static void checkForAll()
         {
-            string[] folders = Directory.GetDirectories("C:\\Users\\Justkunas\\Documents\\Amazon Books\\xml");
+            string[] folders = { "C:\\Users\\Justkunas\\Documents\\Amazon Books\\xml\\998" };//Directory.GetDirectories("C:\\Users\\Justkunas\\Documents\\Amazon Books\\xml\\999");
             string[] files;
             HashSet<string> complete = new HashSet<string>();
             char[] illeagalChars = { '.' };

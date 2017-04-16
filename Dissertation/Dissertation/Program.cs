@@ -18,7 +18,6 @@ namespace Testing
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainScreen());
-            Console.WriteLine("==================Test==================");
         }
     }
 }
