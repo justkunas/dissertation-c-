@@ -12,6 +12,7 @@ namespace Dissertation
         private string isbn, title, ean, binding, label, listPrice, manufacturer, publisher, readingLevel, releaseDate,
             publicationDate, studio, edition, dewey, firstWords, lastWords = "";
         private int numberOfPages = 0;
+        private double priceValue;
         private HashSet<EditorialReview> editorialReviews = new HashSet<EditorialReview>();
         private HashSet<Review> reviews = new HashSet<Review>();
         private HashSet<Image> images = new HashSet<Image>();
@@ -218,6 +219,9 @@ namespace Dissertation
         public static Book parseXML(XElement element)
         {
             Book book = new Book();
+            
+            if (element.Element("dewey") != null)
+                book.Dewey = element.Element("dewey").Value;
 
             if (element.Element("isbn") != null)
                 book.Isbn = element.Element("isbn").Value;
@@ -270,7 +274,16 @@ namespace Dissertation
             {
                 foreach (XElement ele in element.Element("editorialreviews").Elements())
                 {
-                    book.EditorialReviews.Add(new EditorialReview(ele.Element("source").Value, ele.Element("content").Value));
+                    string source = "None";
+                    string content = "None";
+
+                    if(ele.Element("source") != null && ele.Element("source").Value != "")
+                        source = ele.Element("source").Value;
+
+                    if (ele.Element("content") != null && ele.Element("content").Value != "")
+                        content = ele.Element("content").Value;
+
+                    book.EditorialReviews.Add(new EditorialReview(source, content));
                 }
             }
 
@@ -569,6 +582,16 @@ namespace Dissertation
             set
             {
                 listPrice = value;
+                if (value != null && value != "")
+                    double.TryParse((value.Remove(0, 1)), out priceValue);
+            }
+        }
+
+        public double ListPriceValue
+        {
+            get
+            {
+                return priceValue;
             }
         }
 

@@ -7,17 +7,31 @@ using System.Diagnostics;
 
 namespace Testing
 {
-    static class Program
+    public static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
+        /// 
+        public static MainScreen ms;
         [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainScreen());
+			//Application.Run(new MainScreen());
+
+			//*
+            ms = new MainScreen();
+			if(ms != null)
+            	Application.Run(ms);
+			
+
+            /*
+            Application.Run();
+            MainScreen ms = new MainScreen();
+            ms.Show();
+            //*/
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Dissertation
     {
         public static void checkForAllSpecifics()
         {
-            string[] xmlToFind = { "dimensions" };
+            string[] xmlToFind = { "firstwords","lastwords" };
             string[] folders = { "C:\\Users\\Justkunas\\Documents\\Amazon Books\\xml\\999" };
             string[] files;
             HashSet<string> complete = new HashSet<string>();
@@ -27,7 +27,7 @@ namespace Dissertation
                 total += files.Count();
             }
 
-            DateTime start = DateTime.Now;
+            DateTime start = DateTime.Now; 
             Console.WriteLine("Files to check:" + total);
             Console.WriteLine("Press any key to continue...");
             Console.ReadLine();
@@ -139,6 +139,79 @@ namespace Dissertation
                 Console.WriteLine(file);
             }
 
+        }
+
+        public static void imageCount()
+        {
+            char[] illeagalChars = { '.' };
+            XElement doc;
+            int quant = 0;
+            int total = 0;
+
+            int max = 0;
+            string fileWithMost = "";
+
+            double percent;
+            
+            string[] folders = Directory.GetDirectories("C:\\Users\\Justkunas\\Documents\\Amazon Books\\xml");
+            string[] files;
+
+            foreach (string folder in folders)
+            {
+                Console.WriteLine("Counting files in " + folder);
+                files = Directory.GetFiles(folder);
+                total += files.Count();
+            }
+
+            DateTime start = DateTime.Now;
+            Console.WriteLine("Files to check:" + total);
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadLine();
+
+
+            foreach (string folder in folders)
+            {
+                files = Directory.GetFiles(folder);
+                foreach (string file in files)
+                {
+                    string[] splitFile = file.Split(illeagalChars);
+
+                    quant++;
+
+                    percent = (((double)quant / (double)total) * 100);
+                    Console.WriteLine("Checking file: " + file + " - " + string.Format("{0:0.00}", percent) + "%");
+
+                    if (splitFile[1] == "dtd")
+                    {
+                        Console.WriteLine("Break");
+                        break;
+                    }
+
+                    doc = XElement.Load(file);
+
+                    Book book = Book.parseXML(doc);
+                    
+                    if(book.Images.Count > max)
+                    {
+                        max = book.Images.Count;
+                        fileWithMost = file;
+                    }
+
+                }
+            }
+            DateTime end = DateTime.Now;
+
+            Console.WriteLine(fileWithMost + " contained the most images at " + max + " images." );
+            
+            Console.WriteLine("Time elapased " + end.Subtract(start).Minutes + "m " + end.Subtract(start).Seconds + "s.");
+            if (end.Subtract(start).Minutes > 0)
+            {
+                Console.WriteLine("Check rate " + (total / end.Subtract(start).Minutes) + " files per minute");
+            }
+            else
+            {
+                Console.WriteLine("Check rate " + (total / end.Subtract(start).Seconds) + " files per second");
+            }
         }
 
         public static void checkAll()

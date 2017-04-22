@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace Dissertation
 {
@@ -18,6 +19,12 @@ namespace Dissertation
             this.Filters = filters;
 
             useDefaultPath();
+        }
+
+        public override string ToString()
+        {
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+            return jss.Serialize(this);
         }
 
         public void useDefaultPath()
@@ -102,6 +109,16 @@ namespace Dissertation
             numberofpages.enabled = value;
         }
 
+        public override string ToString()
+        {
+            string returnValue = "";
+
+            returnValue += "List price: [" + listprice.min + " - " + listprice.max + "] enabled: " + listprice.enabled +"\n";
+            returnValue += "Number of pages: [" + numberofpages.min + " - " + numberofpages.max + "] enabled: " + numberofpages.enabled +"\n";
+
+            return returnValue;
+        }
+
         public ListPrice listprice
         {
             get
@@ -152,6 +169,15 @@ namespace Dissertation
         {
             this.max = max;
             this.min = min;
+        }
+
+        public override string ToString()
+        {
+            string returnValue = "";
+
+            returnValue += "List price: [" + min + " - " + max + "] enabled: " + enabled + "\n";
+
+            return returnValue;
         }
 
         public bool enabled
@@ -324,6 +350,15 @@ namespace Dissertation
         {
             this.max = max;
             this.min = min;
+        }
+
+        public override string ToString()
+        {
+            string returnValue = "";
+
+            returnValue += "Number of pages: [" + min + " - " + max + "] enabled: " + enabled + "\n";
+
+            return returnValue;
         }
 
         public bool enabled
