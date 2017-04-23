@@ -48,6 +48,7 @@ namespace Dissertation
             filterTree.Nodes["PagesNode"].BackColor = SystemColors.ActiveCaption;
             */
 
+            /*
             XElement doc = XElement.Load(file);
 
             Console.WriteLine(doc.Element("dewey"));
@@ -61,10 +62,16 @@ namespace Dissertation
 
             Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.sv);
             Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.iv);
-
-            /*
+            //*/
+            //*
             XElement parenetEle = XElement.Load(file);
             Book book = Book.parseXML(parenetEle);
+
+            foreach(Image i in book.Images)
+            {
+                Console.WriteLine(i.Url);
+            }
+
             Console.WriteLine(book.Images.Count);
 
 
@@ -98,6 +105,11 @@ namespace Dissertation
         public Label getQuantityLabel()
         {
             return quantityLabel;
+        }
+
+        private void search_Click(object sender, EventArgs e)
+        {
+            vr.search();
         }
 
         //[DllImport("kernel32.dll", SetLastError = true)]

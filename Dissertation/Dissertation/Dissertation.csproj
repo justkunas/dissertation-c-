@@ -148,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="amazon_ex.xml" />
+    <None Include="Resources\Search.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

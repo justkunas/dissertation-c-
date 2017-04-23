@@ -24,12 +24,11 @@ namespace Dissertation
         Views currView = Views.PRODUCTS;
 
         SpeechRecognitionEngine dict, start, filter;
-        Grammar browseGrammar, searchingGrammar, filterGrammar, filterValueGrammar, yesNoGrammar, saveGrammar, numberGrammar;
+        Grammar browseGrammar, searchingGrammar, filterGrammar, filterValueGrammar, yesNoGrammar, saveGrammar, numberGrammar, infoGrammar;
         DictationGrammar dictationGrammar;
-        string[] filterValueCommands, browseCommands, searchingCommands, filterCommands, yesNoCommands, saveCommands, numberCommands;
-        EventHandler<SpeechRecognizedEventArgs> startBrowse, dictSearch, dictFilter, filterCheck, filterValueCheck, yesNoCheck, numberCheck;
-
-        Dictionary<int, string> dictWords = new Dictionary<int, string>();
+        string[] filterValueCommands, browseCommands, searchingCommands, filterCommands, yesNoCommands, saveCommands, numberCommands, infoCommands;
+        EventHandler<SpeechRecognizedEventArgs> startBrowse, dictSearch, dictFilter, filterCheck, filterValueCheck, yesNoCheck, numberCheck, infoCheck;
+        
         bool treatNextAsWord = false;
         IView currentView;
         Timer timer = new Timer();
@@ -43,6 +42,8 @@ namespace Dissertation
         NumberOfPages workingNumberOfPages;
         Filters queryFilters;
         Query query;
+
+        EventHandler<SpeechRecognizedEventArgs>[] events;
 
         Dictionary<string, long> numberRepresentation = new Dictionary<string, long>
         {{"zero",0},{"one",1},{"two",2},{"three",3},{"four",4},
@@ -74,6 +75,7 @@ namespace Dissertation
             yesNoCommands = new string[] { "yes", "no" };
             saveCommands = new string[] { "save", "exit" };
             numberCommands = new string[] { "one","two","three","four","five","six","seven","eight","exit" };
+            infoCommands = new string[] { "more", "images", "more images", "reviews", "blurbers", "similar", "similar products", "creators", "exit"};
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -98,6 +100,9 @@ namespace Dissertation
             Choices numberChoices = new Choices();
             numberChoices.Add(numberCommands);
 
+            Choices infoChoices = new Choices();
+            infoChoices.Add(infoCommands);
+
             //---------------------------------------------------------------------------------------------------------------------------------------------------
 
             GrammarBuilder browseBuilder = new GrammarBuilder();
@@ -121,6 +126,9 @@ namespace Dissertation
             GrammarBuilder numberBuilder = new GrammarBuilder();
             numberBuilder.Append(numberChoices);
 
+            GrammarBuilder infoBuilder = new GrammarBuilder();
+            infoBuilder.Append(infoChoices);
+
             //---------------------------------------------------------------------------------------------------------------------------------------------------
 
             browseGrammar = new Grammar(browseBuilder);
@@ -130,6 +138,7 @@ namespace Dissertation
             yesNoGrammar = new Grammar(yesNoBuilder);
             saveGrammar = new Grammar(saveBuilder);
             numberGrammar = new Grammar(numberBuilder);
+            infoGrammar = new Grammar(infoBuilder);
             dictationGrammar = new DictationGrammar();
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -143,7 +152,7 @@ namespace Dissertation
             dictationGrammar.Name = "Dictation Grammar";
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------
-
+            
             startBrowse = new EventHandler<SpeechRecognizedEventArgs>(startBrowse_SpeechRecognised);
             dictSearch = new EventHandler<SpeechRecognizedEventArgs>(dictSearch_SpeechRecognised);
             dictFilter = new EventHandler<SpeechRecognizedEventArgs>(dictFilter_SpeechRecognised);
@@ -151,9 +160,12 @@ namespace Dissertation
             filterValueCheck = new EventHandler<SpeechRecognizedEventArgs>(filterValueCheck_SpeechRecognised);
             yesNoCheck = new EventHandler<SpeechRecognizedEventArgs>(yesNoCheck_SpeechRecognised);
             numberCheck = new EventHandler<SpeechRecognizedEventArgs>(numberCheck_SpeechRecognised);
-
-            //---------------------------------------------------------------------------------------------------------------------------------------------------
+            infoCheck = new EventHandler<SpeechRecognizedEventArgs>(infoCheck_SpeechRecognised);
             
+            events = new EventHandler<SpeechRecognizedEventArgs>[] { startBrowse, dictSearch, dictFilter, filterCheck, filterValueCheck, yesNoCheck, numberCheck, infoCheck };
+            
+            //---------------------------------------------------------------------------------------------------------------------------------------------------
+
             //---------------------------------------------------------------------------------------------------------------------------------------------------
 
             start.SetInputToDefaultAudioDevice();
@@ -182,6 +194,16 @@ namespace Dissertation
                 currentView.getSaveLabel().Hide();
                 CurrentView.getQuantityLabel().Hide();
                 updateTree();
+            }
+        }
+
+        void clearVoiceRecognitionEngine(SpeechRecognitionEngine sre)
+        {
+            sre.UnloadAllGrammars();
+            
+            foreach(EventHandler<SpeechRecognizedEventArgs> evh in events)
+            {
+                sre.SpeechRecognized -= evh;
             }
         }
 
@@ -217,11 +239,50 @@ namespace Dissertation
             }
         }
 
+        void infoCheck_SpeechRecognised(object sender, SpeechRecognizedEventArgs e)
+        {
+            //"more", "images", "more images", "reviews", "blurbers", "similar", "similar products", "creators", "exit"
+            Console.WriteLine(e.Result.Text);
+            switch (e.Result.Text)
+            {
+                case "more":
+                case "images":
+                case "more images":
+
+                    return;
+                case "reviews":
+
+                    return;
+                case "blurbers":
+
+                    return;
+                case "similar":
+                case "similar products":
+
+                    return;
+                case "creators:":
+
+                    return;
+                case "exit":
+                    CurrentView.getSaveLabel().Hide();
+
+                    clearVoiceRecognitionEngine(start);
+
+                    Query = new Query(getWords(), queryFilters);
+                    Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.iv);
+                    Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.pv);
+                        return;
+            }
+        }
+
         void numberCheck_SpeechRecognised(object sender, SpeechRecognizedEventArgs e)
         {
-            start.UnloadAllGrammars();
-            start.SpeechRecognized -= numberCheck;
+            clearVoiceRecognitionEngine(start);
 
+            foreach (Label l in ((ProductView)currentView).productLabels)
+            {
+                l.Hide();
+            }
 
             if (e.Result.Text == "exit")
             {
@@ -229,11 +290,9 @@ namespace Dissertation
                 start.SpeechRecognized += startBrowse;
             }else
             {
-                start.RecognizeAsyncStop();
                 if(currentView is ProductView)
                 {
                     ProductView pv = ((ProductView)currentView);
-                    Console.WriteLine(pv.se.Pages[pv.currentPage][numberRepresentation[e.Result.Text]]);
                     Testing.Program.ms.iv.loadBook(pv.se.Pages[pv.currentPage][numberRepresentation[e.Result.Text]-1]);
 
                     Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.pv);
@@ -247,20 +306,26 @@ namespace Dissertation
             switch (e.Result.Text)
             {
                 case "view":
-                    Console.WriteLine("Entering view mode");
-                    start.UnloadGrammar(browseGrammar);
-                    start.SpeechRecognized -= startBrowse;
+                    if (currentView is ProductView)
+                    {
+                        Console.WriteLine("Entering view mode");
+                        clearVoiceRecognitionEngine(start);
 
-                    start.LoadGrammar(numberGrammar);
-                    start.SpeechRecognized += numberCheck;
+                        start.LoadGrammar(numberGrammar);
+                        start.SpeechRecognized += numberCheck;
+
+                        foreach (Label l in ((ProductView)currentView).productLabels)
+                        {
+                            l.Show();
+                        }
+                    }
                     return;
                 case "exit":
                     choiceOption = YesNoOptions.EXIT;
 
                     start.RecognizeAsyncStop();
 
-                    start.UnloadGrammar(browseGrammar);
-                    start.SpeechRecognized -= startBrowse;
+                    clearVoiceRecognitionEngine(start);
                     dict.SpeechRecognized += dictSearch;
 
                     filter.LoadGrammar(yesNoGrammar);
@@ -287,10 +352,10 @@ namespace Dissertation
                     start.RecognizeAsyncStop();
                     Console.WriteLine("Starting search voice recognition systems");
 
+                    clearVoiceRecognitionEngine(start);
+
                     dict.LoadGrammar(searchingGrammar);
                     dict.LoadGrammar(dictationGrammar);
-                    start.UnloadGrammar(browseGrammar);
-                    start.SpeechRecognized -= startBrowse;
                     dict.SpeechRecognized += dictSearch;
 
                     Console.WriteLine("Current View: " + currentView);
@@ -302,9 +367,9 @@ namespace Dissertation
                     start.RecognizeAsyncStop();
                     Console.WriteLine("Loading filter voice recognition");
 
+                    clearVoiceRecognitionEngine(start);
+
                     filter.LoadGrammar(filterGrammar);
-                    start.UnloadGrammar(browseGrammar);
-                    start.SpeechRecognized -= startBrowse;
                     filter.SpeechRecognized += filterCheck;
 
                     currentView.getSearchBox().BackColor = SystemColors.ControlLight;
@@ -318,17 +383,35 @@ namespace Dissertation
 
         public void viewLoaded()
         {
+            Console.WriteLine(currentView + " loaded");
+
             if(currentView is ProductView)
             {
                 Console.WriteLine("vr query:" + Query);
                 currentView.getItem()["query"] = Query;
-            }
-            
-            foreach(string s in dictWords.Values)
+            }else if(currentView is InformationView)
             {
-                currentView.getSearchBox().Text += s + " ";
+                Console.WriteLine("Info view loaded");
+                start.LoadGrammar(infoGrammar);
+                start.SpeechRecognized += infoCheck;
             }
 
+            if(Query != null)
+                currentView.getSearchBox().Text += Query.query;
+
+        }
+
+        void addToSearchBar(String s)
+        {
+            Console.WriteLine("Adding \"" + s + "\" to the search bar" );
+
+            if(currentView.getSearchBox().Text == "")
+            {
+                currentView.getSearchBox().Text += s;
+            }else
+            {
+                currentView.getSearchBox().Text += " " + s;
+            }
         }
 
         void dictSearch_SpeechRecognised(object sender, SpeechRecognizedEventArgs e)
@@ -339,16 +422,14 @@ namespace Dissertation
             {
                 if (treatNextAsWord)
                 {
-                    dictWords.Add((dictWords.Count + 1), e.Result.Text);
-                    currentView.getSearchBox().Text += e.Result.Text + " ";
+                    addToSearchBar(e.Result.Text);
                     currentView.getSaveLabel().Hide();
                     treatNextAsWord = false;
                 }
                 else
                 {
+                    clearVoiceRecognitionEngine(dict);
 
-                    dict.UnloadAllGrammars();
-                    dict.SpeechRecognized -= dictSearch;
                     dict.RecognizeAsyncStop();
 
                     currentView.getSearchBox().BackColor = SystemColors.ControlLight;
@@ -363,15 +444,13 @@ namespace Dissertation
             {
                 if (treatNextAsWord)
                 {
-                    dictWords.Add((dictWords.Count + 1), e.Result.Text);
-                    currentView.getSearchBox().Text += e.Result.Text + " ";
+                    addToSearchBar(e.Result.Text);
                     currentView.getSaveLabel().Hide();
                     treatNextAsWord = false;
                 }
                 else
                 {
-                    dict.UnloadAllGrammars();
-                    dict.SpeechRecognized -= dictSearch;
+                    clearVoiceRecognitionEngine(dict);
 
                     filter.LoadGrammar(filterGrammar);
                     filter.SpeechRecognized += filterCheck;
@@ -403,9 +482,8 @@ namespace Dissertation
             {
                 if (treatNextAsWord)
                 {
-                    
-                    dictWords.Add((dictWords.Count + 1), e.Result.Text);
-                    currentView.getSearchBox().Text += e.Result.Text + " ";
+
+                    addToSearchBar(e.Result.Text);
                     currentView.getSaveLabel().Hide();
                     treatNextAsWord = false;
                 }
@@ -421,16 +499,15 @@ namespace Dissertation
             {
                 if (treatNextAsWord)
                 {
-                    
-                    dictWords.Add((dictWords.Count + 1), e.Result.Text);
-                    currentView.getSearchBox().Text += e.Result.Text + " ";
+
+                    addToSearchBar(e.Result.Text);
                     currentView.getSaveLabel().Hide();
                     treatNextAsWord = false;
                 }
                 else
                 {
                     //Console.WriteLine(getWords());
-                    if (dictWords.Count == 0)
+                    if (currentView.getSearchBox().Text == "")
                     {
                         CurrentView.getSaveLabel().Show();
                         CurrentView.getSaveLabel().Text = "Please enter a search criteria";
@@ -440,8 +517,7 @@ namespace Dissertation
                         CurrentView.getSaveLabel().Show();
                         CurrentView.getSaveLabel().Text = "Would you like to search?";
 
-                        dict.UnloadAllGrammars();
-                        dict.SpeechRecognized -= dictSearch;
+                        clearVoiceRecognitionEngine(dict);
                         filter.LoadGrammar(yesNoGrammar);
                         filter.SpeechRecognized += yesNoCheck;
 
@@ -455,24 +531,25 @@ namespace Dissertation
 
             if (e.Result.Text == "incorrect")
             {
+                //asdasda
                 if (treatNextAsWord)
                 {
-                    
-                    dictWords.Add((dictWords.Count + 1), e.Result.Text);
-                    currentView.getSearchBox().Text += e.Result.Text + " ";
+
+                    addToSearchBar(e.Result.Text);
                     currentView.getSaveLabel().Hide();
                     treatNextAsWord = false;
                 }
                 else
                 {
-                    if (dictWords.Count != 0)
+                    string[] searchTerms = currentView.getSearchBox().Text.Split(new char[] { ' ' });
+                    currentView.getSearchBox().Text = "";
+                    
+                    if (searchTerms.Length != 0)
                     {
-                        Console.WriteLine("Removed \"" + dictWords.Last() + "\"");
-                        dictWords.Remove(dictWords.Count);
-                        currentView.getSearchBox().Text = "";
-                        foreach (KeyValuePair<int, string> kv in dictWords)
+                        Console.WriteLine("Removed \"" + searchTerms.Last() + "\"");
+                        for(int i = 0; i < searchTerms.Length - 1; i++)
                         {
-                            currentView.getSearchBox().Text += kv.Value + " ";
+                            addToSearchBar(searchTerms[i]);
                         }
                     }
                 }
@@ -480,9 +557,8 @@ namespace Dissertation
 
             if (!searchingCommands.Contains(e.Result.Text))
             {
-                
-                dictWords.Add((dictWords.Count + 1), e.Result.Text);
-                currentView.getSearchBox().Text += e.Result.Text + " ";
+
+                addToSearchBar(e.Result.Text);
                 currentView.getSaveLabel().Hide();
                 treatNextAsWord = false;
             }
@@ -588,9 +664,7 @@ namespace Dissertation
 
                 }
                 Console.WriteLine("Enter save mode");
-                dict.UnloadGrammar(saveGrammar);
-                dict.UnloadGrammar(dictationGrammar);
-                dict.SpeechRecognized -= dictFilter;
+                clearVoiceRecognitionEngine(dict);
                 filter.LoadGrammar(yesNoGrammar);
                 filter.SpeechRecognized += yesNoCheck;
                 choiceOption = YesNoOptions.SAVE;
@@ -602,9 +676,7 @@ namespace Dissertation
             {
                 filter.LoadGrammar(filterGrammar);
                 filter.SpeechRecognized += filterCheck;
-                dict.UnloadGrammar(saveGrammar);
-                dict.UnloadGrammar(dictationGrammar);
-                dict.SpeechRecognized -= dictFilter;
+                clearVoiceRecognitionEngine(dict);
 
                 dict.RecognizeAsyncStop();
                 filter.RecognizeAsync();
@@ -684,8 +756,7 @@ namespace Dissertation
             {
                 case "exit":
 
-                    filter.UnloadGrammar(filterGrammar);
-                    filter.SpeechRecognized -= filterCheck;
+                    clearVoiceRecognitionEngine(filter);
 
                     currentView.getTreeView().BackColor = SystemColors.ControlLight;
 
@@ -699,9 +770,8 @@ namespace Dissertation
                 case "list price":
                     Console.WriteLine("Switching to filterValue mode");
 
-                    filter.UnloadGrammar(filterGrammar);
+                    clearVoiceRecognitionEngine(filter);
                     filter.LoadGrammar(filterValueGrammar);
-                    filter.SpeechRecognized -= filterCheck;
                     filter.SpeechRecognized += filterValueCheck;
 
                     currentView.getTreeView().Nodes["PriceNode"].BackColor = SystemColors.ActiveCaption;
@@ -713,9 +783,8 @@ namespace Dissertation
                 case "number of pages":
                     Console.WriteLine("Switching to filterValue mode");
 
-                    filter.UnloadGrammar(filterGrammar);
+                    clearVoiceRecognitionEngine(filter);
                     filter.LoadGrammar(filterValueGrammar);
-                    filter.SpeechRecognized -= filterCheck;
                     filter.SpeechRecognized += filterValueCheck;
 
                     currentView.getTreeView().Nodes["PagesNode"].BackColor = SystemColors.ActiveCaption;
@@ -729,8 +798,7 @@ namespace Dissertation
                     dict.LoadGrammar(dictationGrammar);
                     dict.SpeechRecognized += dictSearch;
 
-                    filter.SpeechRecognized -= filterCheck;
-                    filter.UnloadGrammar(filterGrammar);
+                    clearVoiceRecognitionEngine(filter);
 
                     currentView.getTreeView().BackColor = SystemColors.ControlLight;
 
@@ -834,8 +902,7 @@ namespace Dissertation
                             break;
                     }
                     timer.Start();
-                    filter.UnloadGrammar(filterValueGrammar);
-                    filter.SpeechRecognized -= filterValueCheck;
+                    clearVoiceRecognitionEngine(filter);
                     filter.LoadGrammar(filterGrammar);
                     filter.SpeechRecognized += filterCheck;
                     break;
@@ -862,8 +929,7 @@ namespace Dissertation
                             break;
                     }
                     timer.Start();
-                    filter.UnloadGrammar(filterValueGrammar);
-                    filter.SpeechRecognized -= filterValueCheck;
+                    clearVoiceRecognitionEngine(filter);
                     filter.LoadGrammar(filterGrammar);
                     filter.SpeechRecognized += filterCheck;
                     break;
@@ -884,8 +950,7 @@ namespace Dissertation
                             break;
                     }
                     timer.Start();
-                    filter.UnloadGrammar(filterValueGrammar);
-                    filter.SpeechRecognized -= filterValueCheck;
+                    clearVoiceRecognitionEngine(filter);
                     filter.LoadGrammar(filterGrammar);
                     filter.SpeechRecognized += filterCheck;
                     break;
@@ -900,10 +965,9 @@ namespace Dissertation
                             Console.WriteLine(currFilter + ": " + numberOfPages.min + ". Would you like to change this?");
                             changing = Changes.MINIMUM;
 
+                            clearVoiceRecognitionEngine(filter);
                             filter.LoadGrammar(yesNoGrammar);
-                            filter.UnloadGrammar(filterValueGrammar);
                             filter.SpeechRecognized += yesNoCheck;
-                            filter.SpeechRecognized -= filterValueCheck;
 
                             currentView.getTreeView().Nodes["PagesNode"].Nodes["PagesMinimumNode"].BackColor = SystemColors.ActiveCaption;
 
@@ -914,10 +978,9 @@ namespace Dissertation
                             Console.WriteLine(currFilter + ": " + listPrice.min + ". Would you like to change this?");
                             changing = Changes.MINIMUM;
 
+                            clearVoiceRecognitionEngine(filter);
                             filter.LoadGrammar(yesNoGrammar);
-                            filter.UnloadGrammar(filterValueGrammar);
                             filter.SpeechRecognized += yesNoCheck;
-                            filter.SpeechRecognized -= filterValueCheck;
 
                             currentView.getTreeView().Nodes["PriceNode"].Nodes["PricesMinimumNode"].BackColor = SystemColors.ActiveCaption;
 
@@ -937,10 +1000,9 @@ namespace Dissertation
                             Console.WriteLine(currFilter + ": " + numberOfPages.max + ". Would you like to change this?");
                             changing = Changes.MAXIMUM;
 
+                            clearVoiceRecognitionEngine(filter);
                             filter.LoadGrammar(yesNoGrammar);
-                            filter.UnloadGrammar(filterValueGrammar);
                             filter.SpeechRecognized += yesNoCheck;
-                            filter.SpeechRecognized -= filterValueCheck;
 
                             currentView.getTreeView().Nodes["PagesNode"].Nodes["PagesMaximumNode"].BackColor = SystemColors.ActiveCaption;
 
@@ -951,10 +1013,9 @@ namespace Dissertation
                             Console.WriteLine(currFilter + ": " + listPrice.max + ". Would you like to change this?");
                             changing = Changes.MAXIMUM;
 
+                            clearVoiceRecognitionEngine(filter);
                             filter.LoadGrammar(yesNoGrammar);
-                            filter.UnloadGrammar(filterValueGrammar);
                             filter.SpeechRecognized += yesNoCheck;
-                            filter.SpeechRecognized -= filterValueCheck;
 
                             currentView.getTreeView().Nodes["PriceNode"].Nodes["PricesMaximumNode"].BackColor = SystemColors.ActiveCaption;
 
@@ -970,10 +1031,9 @@ namespace Dissertation
                     CurrentView.getQuantityLabel().Hide();
                     clearAllBackColours();
 
+                    clearVoiceRecognitionEngine(filter);
                     filter.LoadGrammar(filterGrammar);
-                    filter.UnloadGrammar(filterValueGrammar);
                     filter.SpeechRecognized += filterCheck;
-                    filter.SpeechRecognized -= filterValueCheck;
 
                     changing = Changes.NONE;
                     return;
@@ -1001,8 +1061,7 @@ namespace Dissertation
                             currentView.getSaveLabel().Text = "Say save to save changes.";
                             currentView.getSaveLabel().Show();
 
-                            filter.SpeechRecognized -= yesNoCheck;
-                            filter.UnloadGrammar(yesNoGrammar);
+                            clearVoiceRecognitionEngine(filter);
 
                             dict.LoadGrammar(saveGrammar);
                             dict.LoadGrammar(dictationGrammar);
@@ -1030,10 +1089,8 @@ namespace Dissertation
                             break;
                         case "no":
                             Console.WriteLine("No recieved");
-
-                            filter.UnloadGrammar(yesNoGrammar);
+                            clearVoiceRecognitionEngine(filter);
                             filter.LoadGrammar(filterGrammar);
-                            filter.SpeechRecognized -= yesNoCheck;
                             filter.SpeechRecognized += filterCheck;
                             clearAllBackColours();
 
@@ -1066,9 +1123,8 @@ namespace Dissertation
 
                             Console.WriteLine(queryFilters);
 
-                            filter.UnloadGrammar(yesNoGrammar);
+                            clearVoiceRecognitionEngine(filter);
                             filter.LoadGrammar(filterGrammar);
-                            filter.SpeechRecognized -= yesNoCheck;
                             filter.SpeechRecognized += filterCheck;
 
                             currentView.getSaveLabel().Text = "Filters saved";
@@ -1080,9 +1136,8 @@ namespace Dissertation
                         case "no":
                             Console.WriteLine("No recieved");
 
-                            filter.UnloadGrammar(yesNoGrammar);
+                            clearVoiceRecognitionEngine(filter);
                             filter.LoadGrammar(filterGrammar);
-                            filter.SpeechRecognized -= yesNoCheck;
                             filter.SpeechRecognized += filterCheck;
                             clearAllBackColours();
 
@@ -1096,33 +1151,12 @@ namespace Dissertation
                     switch (e.Result.Text)
                     {
                         case "yes":
-                            Console.WriteLine("YesNoOptions.SEARCH start: " + getWords());
-                            CurrentView.getSaveLabel().Hide();
-
-                            start.UnloadAllGrammars();
-                            dict.UnloadAllGrammars();
-                            filter.UnloadAllGrammars();
-                            filter.SpeechRecognized -= yesNoCheck;
-                            filter.RecognizeAsyncStop();
-
-                            Query = new Query(getWords(), queryFilters);
-
-                            if (currentView is Search_View)
-                            {
-                                Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.sv);
-                                Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.pv);
-                            }
-                            else
-                            {
-                                ProductView sv = (ProductView)currentView;
-                                sv.querySearch();
-                            }
+                            search();
                             return;
                         case "no":
                             CurrentView.getSaveLabel().Hide();
 
-                            filter.UnloadAllGrammars();
-                            filter.SpeechRecognized -= yesNoCheck;
+                            clearVoiceRecognitionEngine(filter);
                             filter.RecognizeAsyncStop();
 
                             dict.LoadGrammar(searchingGrammar);
@@ -1145,8 +1179,7 @@ namespace Dissertation
                             start.SpeechRecognized += startBrowse;
                             start.RecognizeAsync(RecognizeMode.Multiple);
 
-                            filter.UnloadAllGrammars();
-                            filter.SpeechRecognized -= yesNoCheck;
+                            clearVoiceRecognitionEngine(filter);
 
                             currentView.getSaveLabel().Hide();
 
@@ -1157,26 +1190,41 @@ namespace Dissertation
         }
 
         public string getWords()
-        {
-            string returnValue = "";
+        {       
+            return currentView.getSearchBox().Text;
+        }
 
-            Console.WriteLine(dictWords.Count);
-                
-            //*
-            for (int i = 0; i < dictWords.Count; i++)
+        public void search()
+        {
+            if (currentView.getSearchBox().Text == "")
             {
-                if (i == dictWords.Count - 1)
+                CurrentView.getSaveLabel().Show();
+                CurrentView.getSaveLabel().Text = "Please enter a search criteria";
+            }
+            else
+            {
+                Console.WriteLine("YesNoOptions.SEARCH start: " + getWords());
+                CurrentView.getSaveLabel().Hide();
+
+                clearVoiceRecognitionEngine(start);
+                clearVoiceRecognitionEngine(dict);
+                clearVoiceRecognitionEngine(filter);
+                filter.RecognizeAsyncStop();
+
+                Query = new Query(getWords(), queryFilters);
+
+                if (currentView is Search_View)
                 {
-                    returnValue += dictWords[i + 1];
-                    
+                    Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.sv);
+                    Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.pv);
                 }
                 else
                 {
-                    returnValue += dictWords[i + 1] + " ";
+                    ProductView sv = (ProductView)currentView;
+                    sv.querySearch();
                 }
             }
-            //*/
-            return returnValue;
+
         }
     }
 }

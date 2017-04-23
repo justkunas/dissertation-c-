@@ -278,6 +278,7 @@
             this.Controls.Add(this.mainImage);
             this.Name = "InformationView";
             this.Size = new System.Drawing.Size(1088, 541);
+            this.Load += new System.EventHandler(this.InformationView_Load);
             ((System.ComponentModel.ISupportInitialize)(this.mainImage)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

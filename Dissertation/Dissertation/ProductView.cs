@@ -20,13 +20,28 @@ namespace Dissertation
         public VoiceRecognition vr;
         public SearchEngine se;
 
+        public Label[] productLabels;
+
+        TextBox[] titles;
+        Label[] prices;
+        PictureBox[] imgs;
+
         public ProductView()
         {
             InitializeComponent();
+            titles = new TextBox[] { item1Title, item2Title, item3Title, item4Title, item5Title, item6Title, item7Title, item8Title };
+            prices = new Label[] { item1Price, item2Price, item3Price, item4Price, item5Price, item6Price, item7Price, item8Price };
+            imgs = new PictureBox[] { item1img , item2img, item3img, item4img, item5img, item6img, item7img, item8img,};
         }
 
         private void ProductView_Load(object sender, EventArgs e)
         {
+            productLabels = new Label[] { productLabel1, productLabel2, productLabel3, productLabel4, productLabel5, productLabel6, productLabel7, productLabel8 };
+            foreach(Label l in productLabels)
+            {
+                l.Hide();
+            }
+
             filterTree.ExpandAll();
             vr.CurrentView = this;
             vr.viewLoaded();
@@ -83,227 +98,40 @@ namespace Dissertation
                 Console.WriteLine(book.Title);
             }
 
-            item1Title.Text = books[0].Title;
-            item2Title.Text = books[1].Title;
-            item3Title.Text = books[2].Title;
-            item4Title.Text = books[3].Title;
-            item5Title.Text = books[4].Title;
-            item6Title.Text = books[5].Title;
-            item7Title.Text = books[6].Title;
-            item8Title.Text = books[7].Title;
+            for(int i = 0; i < books.Length; i++)
+            {
+                titles[i].Text = books[i].Title;
 
-            if ((books[0].ListPrice != ""))
-            {
-                item1Price.Text = books[0].ListPrice;
-            }
-            else
-            {
-                item1Price.Text = "???";
-            }
-            if ((books[1].ListPrice != ""))
-            {
-                item2Price.Text = books[1].ListPrice;
-            }
-            else
-            {
-                item2Price.Text = "???";
-            }
-            if ((books[2].ListPrice != ""))
-            {
-                item3Price.Text = books[2].ListPrice;
-            }
-            else
-            {
-                item3Price.Text = "???";
-            }
-            if ((books[3].ListPrice != ""))
-            {
-                item4Price.Text = books[3].ListPrice;
-            }
-            else
-            {
-                item4Price.Text = "???";
-            }
-            if ((books[4].ListPrice != ""))
-            {
-                item5Price.Text = books[4].ListPrice;
-            }
-            else
-            {
-                item5Price.Text = "???";
-            }
-            if ((books[5].ListPrice != ""))
-            {
-                item6Price.Text = books[5].ListPrice;
-            }
-            else
-            {
-                item6Price.Text = "???";
-            }
-            if ((books[6].ListPrice != ""))
-            {
-                item7Price.Text = books[6].ListPrice;
-            }
-            else
-            {
-                item7Price.Text = "???";
-            }
-            if ((books[7].ListPrice != ""))
-            {
-                item8Price.Text = books[7].ListPrice;
-            }
-            else
-            {
-                item8Price.Text = "???";
-            }
+                if ((books[i].ListPrice != ""))
+                {
+                    prices[i].Text = books[i].ListPrice;
+                }
+                else
+                {
+                    prices[i].Text = "???";
+                }
 
-            //*
-            if (books[0].Images.Count != 0)
-            {
-                try
+                if (books[i].Images.Count != 0)
                 {
-                    item1img.Load(books[0].Images.ElementAt(0).Url);
-                    item1img.BorderStyle = BorderStyle.None;
+                    try
+                    {
+                        imgs[i].Load(books[i].Images.ElementAt(0).Url);
+                        imgs[i].BorderStyle = BorderStyle.None;
+                    }
+                    catch (System.Net.WebException)
+                    {
+                        imgs[i].Image = imgs[i].ErrorImage;
+                        imgs[i].BorderStyle = BorderStyle.FixedSingle;
+                    }
                 }
-                catch (System.Net.WebException err)
+                else
                 {
-                    item1img.Image = item1img.ErrorImage;
-                    item1img.BorderStyle = BorderStyle.FixedSingle;
+                    imgs[i].Image = imgs[i].ErrorImage;
+                    imgs[i].BorderStyle = BorderStyle.FixedSingle;
                 }
-            }
-            else
-            {
-                item1img.Image = item1img.ErrorImage;
-                item1img.BorderStyle = BorderStyle.FixedSingle;
-            }
-            if (books[1].Images.Count != 0)
-            {
-                try
-                {
 
-                    item2img.Load(books[1].Images.ElementAt(0).Url);
-                    item2img.BorderStyle = BorderStyle.None;
-                }
-                catch (System.Net.WebException err)
-                {
-                    item2img.Image = item2img.ErrorImage;
-                    item2img.BorderStyle = BorderStyle.FixedSingle;
-                }
             }
-            else
-            {
-                item2img.Image = item2img.ErrorImage;
-                item2img.BorderStyle = BorderStyle.FixedSingle;
-            }
-            if (books[2].Images.Count != 0)
-            {
-                try
-                {
-                    item3img.Load(books[2].Images.ElementAt(0).Url);
-                    item3img.BorderStyle = BorderStyle.None;
-                }
-                catch (System.Net.WebException err)
-                {
-                    item3img.Image = item3img.ErrorImage;
-                    item3img.BorderStyle = BorderStyle.FixedSingle;
-                }
-            }
-            else
-            {
-                item3img.Image = item3img.ErrorImage;
-                item3img.BorderStyle = BorderStyle.FixedSingle;
-            }
-            if (books[3].Images.Count != 0)
-            {
-                try
-                {
-                    item4img.Load(books[3].Images.ElementAt(0).Url);
-                    item4img.BorderStyle = BorderStyle.None;
-                }
-                catch (System.Net.WebException err)
-                {
-                    item4img.Image = item4img.ErrorImage;
-                    item4img.BorderStyle = BorderStyle.FixedSingle;
-                }
-            }
-            else
-            {
-                item4img.Image = item4img.ErrorImage;
-                item4img.BorderStyle = BorderStyle.FixedSingle;
-            }
-            if (books[4].Images.Count != 0)
-            {
-                try
-                {
-                    item5img.Load(books[4].Images.ElementAt(0).Url);
-                    item5img.BorderStyle = BorderStyle.None;
-                }
-                catch (System.Net.WebException err)
-                {
-                    item5img.Image = item5img.ErrorImage;
-                    item5img.BorderStyle = BorderStyle.FixedSingle;
-                }
-            }
-            else
-            {
-                item5img.Image = item5img.ErrorImage;
-                item5img.BorderStyle = BorderStyle.FixedSingle;
-            }
-            if (books[5].Images.Count != 0)
-            {
-                try
-                {
-                    item6img.Load(books[5].Images.ElementAt(0).Url);
-                    item6img.BorderStyle = BorderStyle.None;
-                }
-                catch (System.Net.WebException err)
-                {
-                    item6img.Image = item6img.ErrorImage;
-                    item6img.BorderStyle = BorderStyle.FixedSingle;
-                }
-            }
-            else
-            {
-                item6img.Image = item6img.ErrorImage;
-                item6img.BorderStyle = BorderStyle.FixedSingle;
-            }
-            if (books[6].Images.Count != 0)
-            {
-                try
-                {
-                    item7img.Load(books[6].Images.ElementAt(0).Url);
-                    item7img.BorderStyle = BorderStyle.None;
-
-                }
-                catch (System.Net.WebException err)
-                {
-                    item7img.Image = item7img.ErrorImage;
-                    item7img.BorderStyle = BorderStyle.FixedSingle;
-                }
-            }
-            else
-            {
-                item7img.Image = item7img.ErrorImage;
-                item7img.BorderStyle = BorderStyle.FixedSingle;
-            }
-            if (books[7].Images.Count != 0)
-            {
-                try
-                {
-                    item8img.Load(books[7].Images.ElementAt(0).Url);
-                    item8img.BorderStyle = BorderStyle.None;
-                }
-                catch (System.Net.WebException err)
-                {
-                    item8img.Image = item8img.ErrorImage;
-                    item8img.BorderStyle = BorderStyle.FixedSingle;
-                }
-            }
-            else
-            {
-                item8img.Image = item8img.ErrorImage;
-                item8img.BorderStyle = BorderStyle.FixedSingle;
-            }
+            
         }
 
         private void previous_Click(object sender, EventArgs e)

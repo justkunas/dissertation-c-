@@ -87,6 +87,14 @@
             this.searchBox = new System.Windows.Forms.TextBox();
             this.quantityLabel = new System.Windows.Forms.Label();
             this.SaveLabel = new System.Windows.Forms.Label();
+            this.productLabel1 = new System.Windows.Forms.Label();
+            this.productLabel2 = new System.Windows.Forms.Label();
+            this.productLabel3 = new System.Windows.Forms.Label();
+            this.productLabel4 = new System.Windows.Forms.Label();
+            this.productLabel5 = new System.Windows.Forms.Label();
+            this.productLabel6 = new System.Windows.Forms.Label();
+            this.productLabel7 = new System.Windows.Forms.Label();
+            this.productLabel8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.item8img)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.item7img)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.item6img)).BeginInit();
@@ -465,10 +473,98 @@
             this.SaveLabel.Text = "Would you like to update the filters?";
             this.SaveLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
+            // productLabel1
+            // 
+            this.productLabel1.AutoSize = true;
+            this.productLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.productLabel1.Location = new System.Drawing.Point(369, 43);
+            this.productLabel1.Name = "productLabel1";
+            this.productLabel1.Size = new System.Drawing.Size(25, 26);
+            this.productLabel1.TabIndex = 94;
+            this.productLabel1.Text = "1";
+            // 
+            // productLabel2
+            // 
+            this.productLabel2.AutoSize = true;
+            this.productLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.productLabel2.Location = new System.Drawing.Point(552, 43);
+            this.productLabel2.Name = "productLabel2";
+            this.productLabel2.Size = new System.Drawing.Size(25, 26);
+            this.productLabel2.TabIndex = 94;
+            this.productLabel2.Text = "2";
+            // 
+            // productLabel3
+            // 
+            this.productLabel3.AutoSize = true;
+            this.productLabel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.productLabel3.Location = new System.Drawing.Point(735, 43);
+            this.productLabel3.Name = "productLabel3";
+            this.productLabel3.Size = new System.Drawing.Size(25, 26);
+            this.productLabel3.TabIndex = 94;
+            this.productLabel3.Text = "3";
+            // 
+            // productLabel4
+            // 
+            this.productLabel4.AutoSize = true;
+            this.productLabel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.productLabel4.Location = new System.Drawing.Point(918, 43);
+            this.productLabel4.Name = "productLabel4";
+            this.productLabel4.Size = new System.Drawing.Size(25, 26);
+            this.productLabel4.TabIndex = 94;
+            this.productLabel4.Text = "4";
+            // 
+            // productLabel5
+            // 
+            this.productLabel5.AutoSize = true;
+            this.productLabel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.productLabel5.Location = new System.Drawing.Point(369, 289);
+            this.productLabel5.Name = "productLabel5";
+            this.productLabel5.Size = new System.Drawing.Size(25, 26);
+            this.productLabel5.TabIndex = 94;
+            this.productLabel5.Text = "5";
+            // 
+            // productLabel6
+            // 
+            this.productLabel6.AutoSize = true;
+            this.productLabel6.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.productLabel6.Location = new System.Drawing.Point(552, 289);
+            this.productLabel6.Name = "productLabel6";
+            this.productLabel6.Size = new System.Drawing.Size(25, 26);
+            this.productLabel6.TabIndex = 94;
+            this.productLabel6.Text = "6";
+            // 
+            // productLabel7
+            // 
+            this.productLabel7.AutoSize = true;
+            this.productLabel7.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.productLabel7.Location = new System.Drawing.Point(735, 289);
+            this.productLabel7.Name = "productLabel7";
+            this.productLabel7.Size = new System.Drawing.Size(25, 26);
+            this.productLabel7.TabIndex = 94;
+            this.productLabel7.Text = "7";
+            // 
+            // productLabel8
+            // 
+            this.productLabel8.AutoSize = true;
+            this.productLabel8.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.productLabel8.Location = new System.Drawing.Point(918, 289);
+            this.productLabel8.Name = "productLabel8";
+            this.productLabel8.Size = new System.Drawing.Size(25, 26);
+            this.productLabel8.TabIndex = 94;
+            this.productLabel8.Text = "8";
+            // 
             // ProductView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.productLabel8);
+            this.Controls.Add(this.productLabel4);
+            this.Controls.Add(this.productLabel7);
+            this.Controls.Add(this.productLabel3);
+            this.Controls.Add(this.productLabel6);
+            this.Controls.Add(this.productLabel2);
+            this.Controls.Add(this.productLabel5);
+            this.Controls.Add(this.productLabel1);
             this.Controls.Add(this.quantityLabel);
             this.Controls.Add(this.SaveLabel);
             this.Controls.Add(this.searchBox);
@@ -553,5 +649,13 @@
         private System.Windows.Forms.Label search;
         private System.Windows.Forms.Label quantityLabel;
         private System.Windows.Forms.Label SaveLabel;
+        private System.Windows.Forms.Label productLabel1;
+        private System.Windows.Forms.Label productLabel2;
+        private System.Windows.Forms.Label productLabel3;
+        private System.Windows.Forms.Label productLabel4;
+        private System.Windows.Forms.Label productLabel5;
+        private System.Windows.Forms.Label productLabel6;
+        private System.Windows.Forms.Label productLabel7;
+        private System.Windows.Forms.Label productLabel8;
     }
 }

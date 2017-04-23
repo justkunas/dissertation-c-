@@ -32,6 +32,7 @@ namespace Testing
             vr = new VoiceRecognition();
             pv.vr = vr;
             sv.vr = vr;
+            iv.vr = vr;
             Master.Controls.Add(sv);
         }
         

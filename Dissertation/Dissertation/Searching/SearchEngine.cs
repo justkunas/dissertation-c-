@@ -128,28 +128,42 @@ namespace Dissertation.Searching
             string path = "";
             int lastPage = 0;
 
-            for (int i = 0; i < (QueryResults.Length / 8); i++)
+            Console.WriteLine(QueryResults.Length);
+
+            if (QueryResults.Length > 8)
             {
-                Book[] entry = new Book[8];
-                for (int j = 0 + (i * 8); j < 8 + (i * 8); j++)
+                for (int i = 0; i < (QueryResults.Length / 8); i++)
                 {
-                    entry[j - (i * 8)] = Book.parseXML(XElement.Load(QueryResults[j]));
-                    path = QueryResults[j];
+                    Book[] entry = new Book[8];
+                    for (int j = 0 + (i * 8); j < 8 + (i * 8); j++)
+                    {
+                        entry[j - (i * 8)] = Book.parseXML(XElement.Load(QueryResults[j]));
+                        path = QueryResults[j];
+                    }
+
+
+                    pages[i] = entry;
+                    lastPage = i;
                 }
 
-
-                pages[i] = entry;
-                lastPage = i;
-            }
-
-            Book[] lastEntry = new Book[8];
-            for (int i = 0; i < 8; i++)
+                Book[] lastEntry = new Book[8];
+                for (int i = 0; i < 8; i++)
+                {
+                    string url = QueryResults[QueryResults.Length - (8 - i)];
+                    XElement doc = XElement.Load(url);
+                    lastEntry[i] = Book.parseXML(doc);
+                }
+                var keys = pages.Keys;
+            }else
             {
-                string url = QueryResults[QueryResults.Length - (8 - i)];
-                XElement doc = XElement.Load(url);
-                lastEntry[i] = Book.parseXML(doc);
+                Book[] soleEntry = new Book[QueryResults.Length];
+                for(int i = 0; i < QueryResults.Length; i++)
+                {
+                    XElement doc = XElement.Load(QueryResults[i]);
+                    soleEntry[i] = Book.parseXML(doc);
+                }
+                pages[0] = soleEntry;
             }
-            var keys = pages.Keys;
         }
 
 

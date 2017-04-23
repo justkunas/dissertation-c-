@@ -12,72 +12,68 @@ using System.IO;
 
 namespace Dissertation
 {
-    public partial class InformationView : UserControl
+    public partial class InformationView : UserControl, IView
     {
+        public VoiceRecognition vr;
+
         public InformationView()
         {
             InitializeComponent();
         }
 
+        private void InformationView_Load(object sender, EventArgs e)
+        {
+            vr.viewLoaded();
+        }
+
         public void loadBook(Book book)
         {
-            /*
-            int width1;
-            string img1 = book.Images.ElementAt(0).Url;
-            int width2;
-            string img2 = book.Images.ElementAt(1).Url;
-
-            int working = 0;
-
-            int.TryParse(book.Images.ElementAt(0).Url.Split(new char[] { '_' })[1].Remove(0, 2), out width1);
-            int.TryParse(book.Images.ElementAt(1).Url.Split(new char[] { '_' })[1].Remove(0, 2), out width2);
-
-            foreach (Image i in book.Images)
-            {
-                string[] urlBreakdown = i.Url.Split(new char[] { '_' });
-
-                int.TryParse(urlBreakdown[1].Remove(0, 2), out working);
-
-                Console.WriteLine(working + " > " + width1);
-
-                Console.WriteLine();
-
-                if (working > width1)
-                {
-                    img1 = i.Url;
-                    width1 = working;
-                }
-                else
-                {
-                    Console.WriteLine(working + " > " + width2);
-                    if (working > width2)
-                    {
-                        img2 = i.Url;
-                        width2 = working;
-                    }
-                }
-
-            }
+            Image img1 = book.Images.ElementAt(0);
+            string img1Code = "";
+            Image img2 = null;
             
-            Console.WriteLine(img1);
-            Console.WriteLine(img2);
-
-            //*/
             if (book.Images.Count > 0)
             {
+
+                img1Code = img1.Url.Split(new string[] { "/I/" }, StringSplitOptions.None)[1].Split(new string[] { "._" }, StringSplitOptions.None)[0];
+                
+                foreach (Image img in book.Images)
+                {
+                    string imgCode = img.Url.Split(new string[] { "/I/" }, StringSplitOptions.None)[1].Split(new string[] { "._" }, StringSplitOptions.None)[0];
+                    
+                    if (img1Code != imgCode)
+                    {
+                        img2 = img;
+                        break;
+                    }
+                }
+            }
+            
+
+            if (book.Images.Count > 0)
+            {
+                Console.WriteLine(img1.Url);
                 try
                 {
-                    mainImage.Load(book.Images.ElementAt(0).Url);
+                    mainImage.Load(img1.Url);
                     mainImage.BorderStyle = BorderStyle.None;
+                }
+                catch (NullReferenceException)
+                {
+                    Console.WriteLine("NullReferenceException");
+                    mainImage.Image = mainImage.ErrorImage;
+                    mainImage.BorderStyle = BorderStyle.FixedSingle;
                 }
                 catch (WebException)
                 {
+                    Console.WriteLine("WebException");
                     mainImage.Image = mainImage.ErrorImage;
                     mainImage.BorderStyle = BorderStyle.FixedSingle;
                 }
             }
             else
             {
+                Console.WriteLine("Fallen into else");
                 mainImage.Image = mainImage.ErrorImage;
                 mainImage.BorderStyle = BorderStyle.FixedSingle;
             }
@@ -88,12 +84,17 @@ namespace Dissertation
             {
                 try
                 {
-                    secondaryImage.Load(book.Images.ElementAt(1).Url);
+                    secondaryImage.Load(img2.Url);
                     secondaryImage.BorderStyle = BorderStyle.None;
+                }
+                catch (NullReferenceException)
+                {
+                    secondaryImage.Image = mainImage.ErrorImage;
+                    secondaryImage.BorderStyle = BorderStyle.FixedSingle;
                 }
                 catch (WebException)
                 {
-                    secondaryImage.Image = secondaryImage.ErrorImage;
+                    secondaryImage.Image = mainImage.ErrorImage;
                     secondaryImage.BorderStyle = BorderStyle.FixedSingle;
                 }
             }
@@ -198,7 +199,31 @@ namespace Dissertation
             {
                 epigraphs.Text = "No epigraphs";
             }
+        }
 
+        public TextBox getSearchBox()
+        {
+            throw new NotImplementedException();
+        }
+
+        public TreeView getTreeView()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Label getQuantityLabel()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Label getSaveLabel()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Dictionary<string, object> getItem()
+        {
+            throw new NotImplementedException();
         }
     }
 }
