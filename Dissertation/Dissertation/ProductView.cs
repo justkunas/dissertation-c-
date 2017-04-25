@@ -36,25 +36,28 @@ namespace Dissertation
 
         private void ProductView_Load(object sender, EventArgs e)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Product view loaded");
+            Console.ForegroundColor = ConsoleColor.White;
+            vr.CurrentView = this;
+
             productLabels = new Label[] { productLabel1, productLabel2, productLabel3, productLabel4, productLabel5, productLabel6, productLabel7, productLabel8 };
             foreach(Label l in productLabels)
             {
                 l.Hide();
             }
-
+            
             filterTree.ExpandAll();
-            vr.CurrentView = this;
-            vr.viewLoaded();
             se = new SearchEngine(null);
 
             this.querySearch();
 
+            vr.viewLoaded();
             vr.startKeyWordRecogniser();
         }
 
         public void querySearch()
         {
-            Console.WriteLine(vr.Query);
             se.Query = vr.Query;
             se.search();
             refreshScreen(se.Pages[0]);
@@ -117,17 +120,20 @@ namespace Dissertation
                     {
                         imgs[i].Load(books[i].Images.ElementAt(0).Url);
                         imgs[i].BorderStyle = BorderStyle.None;
+                        imgs[i].SizeMode = PictureBoxSizeMode.CenterImage;
                     }
                     catch (System.Net.WebException)
                     {
                         imgs[i].Image = imgs[i].ErrorImage;
                         imgs[i].BorderStyle = BorderStyle.FixedSingle;
+                        imgs[i].SizeMode = PictureBoxSizeMode.Normal;
                     }
                 }
                 else
                 {
                     imgs[i].Image = imgs[i].ErrorImage;
                     imgs[i].BorderStyle = BorderStyle.FixedSingle;
+                    imgs[i].SizeMode = PictureBoxSizeMode.Normal;
                 }
 
             }

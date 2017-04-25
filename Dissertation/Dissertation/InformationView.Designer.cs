@@ -44,8 +44,8 @@
             this.reviews = new System.Windows.Forms.Button();
             this.creators = new System.Windows.Forms.Button();
             this.blurbers = new System.Windows.Forms.Button();
-            this.similarProducts = new System.Windows.Forms.Button();
             this.secondaryImage = new System.Windows.Forms.PictureBox();
+            this.debugButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mainImage)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -232,21 +232,12 @@
             // 
             // blurbers
             // 
-            this.blurbers.Location = new System.Drawing.Point(309, 488);
+            this.blurbers.Location = new System.Drawing.Point(436, 488);
             this.blurbers.Name = "blurbers";
             this.blurbers.Size = new System.Drawing.Size(200, 23);
             this.blurbers.TabIndex = 12;
             this.blurbers.Text = "Blurbers";
             this.blurbers.UseVisualStyleBackColor = true;
-            // 
-            // similarProducts
-            // 
-            this.similarProducts.Location = new System.Drawing.Point(585, 488);
-            this.similarProducts.Name = "similarProducts";
-            this.similarProducts.Size = new System.Drawing.Size(200, 23);
-            this.similarProducts.TabIndex = 13;
-            this.similarProducts.Text = "Similar Products";
-            this.similarProducts.UseVisualStyleBackColor = true;
             // 
             // secondaryImage
             // 
@@ -256,12 +247,22 @@
             this.secondaryImage.TabIndex = 14;
             this.secondaryImage.TabStop = false;
             // 
+            // debugButton
+            // 
+            this.debugButton.Location = new System.Drawing.Point(499, 396);
+            this.debugButton.Name = "debugButton";
+            this.debugButton.Size = new System.Drawing.Size(89, 23);
+            this.debugButton.TabIndex = 15;
+            this.debugButton.Text = "Debug Button";
+            this.debugButton.UseVisualStyleBackColor = true;
+            this.debugButton.Click += new System.EventHandler(this.debugButton_Click);
+            // 
             // InformationView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.debugButton);
             this.Controls.Add(this.secondaryImage);
-            this.Controls.Add(this.similarProducts);
             this.Controls.Add(this.blurbers);
             this.Controls.Add(this.creators);
             this.Controls.Add(this.reviews);
@@ -308,7 +309,7 @@
         private System.Windows.Forms.Button reviews;
         private System.Windows.Forms.Button creators;
         private System.Windows.Forms.Button blurbers;
-        private System.Windows.Forms.Button similarProducts;
         private System.Windows.Forms.PictureBox secondaryImage;
+        private System.Windows.Forms.Button debugButton;
     }
 }

@@ -9,12 +9,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
 using System.IO;
+using System.Speech.Recognition;
 
 namespace Dissertation
 {
     public partial class InformationView : UserControl, IView
     {
         public VoiceRecognition vr;
+        public Book book;
 
         public InformationView()
         {
@@ -23,18 +25,22 @@ namespace Dissertation
 
         private void InformationView_Load(object sender, EventArgs e)
         {
+            vr.CurrentView = this;
             vr.viewLoaded();
         }
 
         public void loadBook(Book book)
         {
-            Image img1 = book.Images.ElementAt(0);
+            this.book = book;
+
+            Image img1 = null;
             string img1Code = "";
             Image img2 = null;
             
             if (book.Images.Count > 0)
             {
 
+                img1 = book.Images.ElementAt(0);
                 img1Code = img1.Url.Split(new string[] { "/I/" }, StringSplitOptions.None)[1].Split(new string[] { "._" }, StringSplitOptions.None)[0];
                 
                 foreach (Image img in book.Images)
@@ -103,6 +109,16 @@ namespace Dissertation
                 secondaryImage.Image = secondaryImage.ErrorImage;
                 secondaryImage.BorderStyle = BorderStyle.FixedSingle;
             }
+
+            if (book.Images.Count < 2)
+                moreImages.Hide();
+
+            if (book.Reviews.Count == 0 && book.EditorialReviews.Count == 0)
+                reviews.Hide();
+            
+            if (book.Creators.Count == 0)
+                creators.Hide();
+
 
             secondaryImage.SizeMode = PictureBoxSizeMode.CenterImage;
 
@@ -225,5 +241,14 @@ namespace Dissertation
         {
             throw new NotImplementedException();
         }
+
+        private void debugButton_Click(object sender, EventArgs e)
+        {
+            foreach(Grammar g in vr.getLoadedGrammars())
+            {
+                Console.WriteLine(g.Name);
+            }
+        }
+        
     }
 }

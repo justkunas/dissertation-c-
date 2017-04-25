@@ -292,8 +292,6 @@ namespace Dissertation
                 
                 foreach (XElement ele in element.Element("reviews").Elements())
                 {
-                    //Console.WriteLine(ele);
-
                     int rating = 0;
                     int totalvotes = 0;
                     int helpfulvotes = 0;

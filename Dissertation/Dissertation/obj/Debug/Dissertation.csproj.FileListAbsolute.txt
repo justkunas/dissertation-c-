@@ -34,3 +34,5 @@ C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\02\dissertation\Disse
 C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\02\dissertation\Dissertation\Dissertation\bin\Debug\Microsoft.VisualStudio.DebuggerVisualizers.dll
 C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\02\dissertation\Dissertation\Dissertation\bin\Debug\Microsoft.VisualStudio.DebuggerVisualizers.xml
 C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\02\dissertation\Dissertation\Dissertation\obj\Debug\Dissertation.InformationView.resources
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\02\dissertation\Dissertation\Dissertation\obj\Debug\Dissertation.ReviewView.resources
+C:\Users\Justkunas\Documents\Projects\VisualStudio\Testing\02\dissertation\Dissertation\Dissertation\obj\Debug\Dissertation.ImageView.resources

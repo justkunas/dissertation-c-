@@ -36,8 +36,21 @@ namespace Dissertation
 
         private void debugButton_Click(object sender, EventArgs e)
         {
+            //FileChecking.checkForAllSpecifics();
+            //*
             string file = @"C:\Users\Justkunas\Documents\Amazon Books\xml\476\0787964476.xml";
             string file2 = @"C:\Users\Justkunas\Documents\Amazon Books\xml\999\0030639999.xml";
+            string file3 = @"C:\Users\Justkunas\Documents\Amazon Books\xml\999\0312427999.xml";
+            string file4 = @"C:\Users\Justkunas\Documents\Amazon Books\xml\999\0006351999.xml";
+
+            Book book = Book.parseXML(XElement.Load(file));
+
+            Testing.Program.ms.imgv.Book = book;
+
+            Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.sv);
+            Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.imgv);
+            //*/
+            //FileChecking.imageCount();
 
             /*
             foreach(TreeNode v in filterTree.Nodes)
@@ -63,7 +76,7 @@ namespace Dissertation
             Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.sv);
             Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.iv);
             //*/
-            //*
+            /*
             XElement parenetEle = XElement.Load(file);
             Book book = Book.parseXML(parenetEle);
 
@@ -73,8 +86,6 @@ namespace Dissertation
             }
 
             Console.WriteLine(book.Images.Count);
-
-
             //*/
 
         }

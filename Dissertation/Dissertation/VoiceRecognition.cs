@@ -21,14 +21,13 @@ namespace Dissertation
         AllFilters currFilter = AllFilters.NONE;
         Changes changing = Changes.NONE;
         YesNoOptions choiceOption = YesNoOptions.NONE;
-        Views currView = Views.PRODUCTS;
 
         SpeechRecognitionEngine dict, start, filter;
-        Grammar browseGrammar, searchingGrammar, filterGrammar, filterValueGrammar, yesNoGrammar, saveGrammar, numberGrammar, infoGrammar;
+        Grammar browseGrammar, searchingGrammar, filterGrammar, filterValueGrammar, yesNoGrammar, saveGrammar, numberGrammar, infoGrammar, reviewGrammar;
         DictationGrammar dictationGrammar;
-        string[] filterValueCommands, browseCommands, searchingCommands, filterCommands, yesNoCommands, saveCommands, numberCommands, infoCommands;
-        EventHandler<SpeechRecognizedEventArgs> startBrowse, dictSearch, dictFilter, filterCheck, filterValueCheck, yesNoCheck, numberCheck, infoCheck;
-        
+        string[] filterValueCommands, browseCommands, searchingCommands, filterCommands, yesNoCommands, saveCommands, numberCommands, infoCommands, reviewCommands;
+        EventHandler<SpeechRecognizedEventArgs> startBrowse, dictSearch, dictFilter, filterCheck, filterValueCheck, yesNoCheck, numberCheck, infoCheck, reviewCheck;
+
         bool treatNextAsWord = false;
         IView currentView;
         Timer timer = new Timer();
@@ -74,8 +73,9 @@ namespace Dissertation
             filterValueCommands = new string[] { "enable", "disable", "enabled", "min", "minimum", "max", "maximum", "exit" };
             yesNoCommands = new string[] { "yes", "no" };
             saveCommands = new string[] { "save", "exit" };
-            numberCommands = new string[] { "one","two","three","four","five","six","seven","eight","exit" };
-            infoCommands = new string[] { "more", "images", "more images", "reviews", "blurbers", "similar", "similar products", "creators", "exit"};
+            numberCommands = new string[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "exit" };
+            infoCommands = new string[] { "more", "images", "more images", "reviews", "blurbers", "similar", "similar products", "creators", "exit" };
+            reviewCommands = new string[] { "exit", "next editorial review", "previous editorial review", "next review", "previous review" };
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -103,6 +103,9 @@ namespace Dissertation
             Choices infoChoices = new Choices();
             infoChoices.Add(infoCommands);
 
+            Choices reviewChoices = new Choices();
+            reviewChoices.Add(reviewCommands);
+
             //---------------------------------------------------------------------------------------------------------------------------------------------------
 
             GrammarBuilder browseBuilder = new GrammarBuilder();
@@ -129,6 +132,9 @@ namespace Dissertation
             GrammarBuilder infoBuilder = new GrammarBuilder();
             infoBuilder.Append(infoChoices);
 
+            GrammarBuilder reviewBuilder = new GrammarBuilder();
+            reviewBuilder.Append(reviewChoices);
+
             //---------------------------------------------------------------------------------------------------------------------------------------------------
 
             browseGrammar = new Grammar(browseBuilder);
@@ -139,6 +145,8 @@ namespace Dissertation
             saveGrammar = new Grammar(saveBuilder);
             numberGrammar = new Grammar(numberBuilder);
             infoGrammar = new Grammar(infoBuilder);
+            reviewGrammar = new Grammar(reviewBuilder);
+
             dictationGrammar = new DictationGrammar();
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -149,10 +157,12 @@ namespace Dissertation
             filterValueGrammar.Name = "Filter Value Grammar";
             saveGrammar.Name = "Save Grammar";
             numberGrammar.Name = "Number Grammar";
+            infoGrammar.Name = "Info Grammar";
+            reviewGrammar.Name = "Review Grammar";
             dictationGrammar.Name = "Dictation Grammar";
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------
-            
+
             startBrowse = new EventHandler<SpeechRecognizedEventArgs>(startBrowse_SpeechRecognised);
             dictSearch = new EventHandler<SpeechRecognizedEventArgs>(dictSearch_SpeechRecognised);
             dictFilter = new EventHandler<SpeechRecognizedEventArgs>(dictFilter_SpeechRecognised);
@@ -161,9 +171,10 @@ namespace Dissertation
             yesNoCheck = new EventHandler<SpeechRecognizedEventArgs>(yesNoCheck_SpeechRecognised);
             numberCheck = new EventHandler<SpeechRecognizedEventArgs>(numberCheck_SpeechRecognised);
             infoCheck = new EventHandler<SpeechRecognizedEventArgs>(infoCheck_SpeechRecognised);
-            
-            events = new EventHandler<SpeechRecognizedEventArgs>[] { startBrowse, dictSearch, dictFilter, filterCheck, filterValueCheck, yesNoCheck, numberCheck, infoCheck };
-            
+            reviewCheck = new EventHandler<SpeechRecognizedEventArgs>(reviewCheck_SpeechRecognised);
+
+            events = new EventHandler<SpeechRecognizedEventArgs>[] { startBrowse, dictSearch, dictFilter, filterCheck, filterValueCheck, yesNoCheck, numberCheck, infoCheck, reviewCheck };
+
             //---------------------------------------------------------------------------------------------------------------------------------------------------
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -189,19 +200,26 @@ namespace Dissertation
             set
             {
                 currentView = value;
-                currentView.getSearchBox().BackColor = SystemColors.ControlLight;
-                currentView.getTreeView().BackColor = SystemColors.ControlLight;
-                currentView.getSaveLabel().Hide();
-                CurrentView.getQuantityLabel().Hide();
-                updateTree();
+                try
+                {
+                    currentView.getSearchBox().BackColor = SystemColors.ControlLight;
+                    currentView.getTreeView().BackColor = SystemColors.ControlLight;
+                    currentView.getSaveLabel().Hide();
+                    currentView.getQuantityLabel().Hide();
+                    updateTree();
+                }
+                catch (NotImplementedException)
+                {
+
+                }
             }
         }
 
         void clearVoiceRecognitionEngine(SpeechRecognitionEngine sre)
         {
             sre.UnloadAllGrammars();
-            
-            foreach(EventHandler<SpeechRecognizedEventArgs> evh in events)
+
+            foreach (EventHandler<SpeechRecognizedEventArgs> evh in events)
             {
                 sre.SpeechRecognized -= evh;
             }
@@ -239,9 +257,37 @@ namespace Dissertation
             }
         }
 
+        void reviewCheck_SpeechRecognised(object sender, SpeechRecognizedEventArgs e)
+        {
+            
+            ReviewView rv = Testing.Program.ms.rv;
+            switch (e.Result.Text)
+            {
+                case "exit":
+                    clearVoiceRecognitionEngine(start);
+                    start.LoadGrammar(infoGrammar);
+                    start.SpeechRecognized += infoCheck;
+
+                    Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.rv);
+                    Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.iv);
+                    return;
+                case "next editorial review":
+                    rv.nextEditorialReviewPage();
+                    return;
+                case "previous editorial review":
+                    rv.previousEditorialReviewPage();
+                    return;
+                case "next review":
+                    rv.nextReviewPage();
+                    return;
+                case "previous review":
+                    rv.previousReviewPage();
+                    return;
+            }
+        }
+
         void infoCheck_SpeechRecognised(object sender, SpeechRecognizedEventArgs e)
         {
-            //"more", "images", "more images", "reviews", "blurbers", "similar", "similar products", "creators", "exit"
             Console.WriteLine(e.Result.Text);
             switch (e.Result.Text)
             {
@@ -251,6 +297,13 @@ namespace Dissertation
 
                     return;
                 case "reviews":
+                    clearVoiceRecognitionEngine(start);
+                    start.LoadGrammar(reviewGrammar);
+                    start.SpeechRecognized += reviewCheck;
+
+                    Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.iv);
+                    Testing.Program.ms.rv.Book = Testing.Program.ms.iv.book;
+                    Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.rv);
 
                     return;
                 case "blurbers":
@@ -264,14 +317,15 @@ namespace Dissertation
 
                     return;
                 case "exit":
-                    CurrentView.getSaveLabel().Hide();
-
                     clearVoiceRecognitionEngine(start);
+                    start.RecognizeAsyncStop();
 
-                    Query = new Query(getWords(), queryFilters);
+                    this.CurrentView = Testing.Program.ms.pv;
                     Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.iv);
                     Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.pv);
-                        return;
+
+                    this.startKeyWordRecogniser();
+                    return;
             }
         }
 
@@ -279,7 +333,7 @@ namespace Dissertation
         {
             clearVoiceRecognitionEngine(start);
 
-            foreach (Label l in ((ProductView)currentView).productLabels)
+            foreach (Label l in ((ProductView)CurrentView).productLabels)
             {
                 l.Hide();
             }
@@ -288,16 +342,26 @@ namespace Dissertation
             {
                 start.LoadGrammar(browseGrammar);
                 start.SpeechRecognized += startBrowse;
-            }else
+            }
+            else
             {
-                if(currentView is ProductView)
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine((CurrentView is ProductView));
+                if (CurrentView is ProductView)
                 {
-                    ProductView pv = ((ProductView)currentView);
-                    Testing.Program.ms.iv.loadBook(pv.se.Pages[pv.currentPage][numberRepresentation[e.Result.Text]-1]);
+                    ProductView pv = ((ProductView)CurrentView);
+                    Testing.Program.ms.iv.loadBook(pv.se.Pages[pv.currentPage][numberRepresentation[e.Result.Text] - 1]);
+                    Console.WriteLine((numberRepresentation[e.Result.Text] - 1));
 
                     Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.pv);
                     Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.iv);
+
+                    this.CurrentView = Testing.Program.ms.iv;
+
+                    start.LoadGrammar(infoGrammar);
+                    start.SpeechRecognized += infoCheck;
                 }
+                Console.ForegroundColor = ConsoleColor.White;
             }
         }
 
@@ -306,7 +370,7 @@ namespace Dissertation
             switch (e.Result.Text)
             {
                 case "view":
-                    if (currentView is ProductView)
+                    if (CurrentView is ProductView)
                     {
                         Console.WriteLine("Entering view mode");
                         clearVoiceRecognitionEngine(start);
@@ -314,7 +378,7 @@ namespace Dissertation
                         start.LoadGrammar(numberGrammar);
                         start.SpeechRecognized += numberCheck;
 
-                        foreach (Label l in ((ProductView)currentView).productLabels)
+                        foreach (Label l in ((ProductView)CurrentView).productLabels)
                         {
                             l.Show();
                         }
@@ -331,21 +395,21 @@ namespace Dissertation
                     filter.LoadGrammar(yesNoGrammar);
                     filter.SpeechRecognized += yesNoCheck;
 
-                    currentView.getSaveLabel().Text = "Would you like to close this program?";
-                    currentView.getSaveLabel().Show();
+                    CurrentView.getSaveLabel().Text = "Would you like to close this program?";
+                    CurrentView.getSaveLabel().Show();
 
                     filter.RecognizeAsync(RecognizeMode.Multiple);
                     return;
                 case "next":
-                    if(currentView is ProductView)
+                    if (CurrentView is ProductView)
                     {
-                        ((ProductView)currentView).nextPage();
+                        ((ProductView)CurrentView).nextPage();
                     }
                     return;
                 case "previous":
-                    if (currentView is ProductView)
+                    if (CurrentView is ProductView)
                     {
-                        ((ProductView)currentView).previousPage();
+                        ((ProductView)CurrentView).previousPage();
                     }
                     return;
                 case "search":
@@ -358,9 +422,9 @@ namespace Dissertation
                     dict.LoadGrammar(dictationGrammar);
                     dict.SpeechRecognized += dictSearch;
 
-                    Console.WriteLine("Current View: " + currentView);
-                    currentView.getTreeView().BackColor = SystemColors.ControlLight;
-                    currentView.getSearchBox().BackColor = SystemColors.Window;
+                    Console.WriteLine("Current View: " + CurrentView);
+                    CurrentView.getTreeView().BackColor = SystemColors.ControlLight;
+                    CurrentView.getSearchBox().BackColor = SystemColors.Window;
                     dict.RecognizeAsync(RecognizeMode.Multiple);
                     return;
                 case "filter":
@@ -372,8 +436,8 @@ namespace Dissertation
                     filter.LoadGrammar(filterGrammar);
                     filter.SpeechRecognized += filterCheck;
 
-                    currentView.getSearchBox().BackColor = SystemColors.ControlLight;
-                    currentView.getTreeView().BackColor = SystemColors.Window;
+                    CurrentView.getSearchBox().BackColor = SystemColors.ControlLight;
+                    CurrentView.getTreeView().BackColor = SystemColors.Window;
                     filter.RecognizeAsync(RecognizeMode.Multiple);
                     return;
             }
@@ -383,34 +447,42 @@ namespace Dissertation
 
         public void viewLoaded()
         {
-            Console.WriteLine(currentView + " loaded");
-
-            if(currentView is ProductView)
+            if (CurrentView is ProductView)
             {
-                Console.WriteLine("vr query:" + Query);
-                currentView.getItem()["query"] = Query;
-            }else if(currentView is InformationView)
+                CurrentView.getItem()["query"] = Query;
+            }
+            else if (CurrentView is InformationView)
             {
                 Console.WriteLine("Info view loaded");
-                start.LoadGrammar(infoGrammar);
-                start.SpeechRecognized += infoCheck;
             }
 
-            if(Query != null)
-                currentView.getSearchBox().Text += Query.query;
+            if (Query != null)
+            {
+                try
+                {
+                    CurrentView.getSearchBox().Text += Query.query;
+                }
+                catch (NotImplementedException)
+                {
 
+                }
+            }
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(CurrentView);
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         void addToSearchBar(String s)
         {
-            Console.WriteLine("Adding \"" + s + "\" to the search bar" );
+            Console.WriteLine("Adding \"" + s + "\" to the search bar");
 
-            if(currentView.getSearchBox().Text == "")
+            if (CurrentView.getSearchBox().Text == "")
             {
-                currentView.getSearchBox().Text += s;
-            }else
+                CurrentView.getSearchBox().Text += s;
+            }
+            else
             {
-                currentView.getSearchBox().Text += " " + s;
+                CurrentView.getSearchBox().Text += " " + s;
             }
         }
 
@@ -418,12 +490,12 @@ namespace Dissertation
         {
             Console.WriteLine(e.Result.Text);
 
-            if(e.Result.Text == "exit")
+            if (e.Result.Text == "exit")
             {
                 if (treatNextAsWord)
                 {
                     addToSearchBar(e.Result.Text);
-                    currentView.getSaveLabel().Hide();
+                    CurrentView.getSaveLabel().Hide();
                     treatNextAsWord = false;
                 }
                 else
@@ -432,7 +504,7 @@ namespace Dissertation
 
                     dict.RecognizeAsyncStop();
 
-                    currentView.getSearchBox().BackColor = SystemColors.ControlLight;
+                    CurrentView.getSearchBox().BackColor = SystemColors.ControlLight;
 
                     start.LoadGrammar(browseGrammar);
                     start.SpeechRecognized += startBrowse;
@@ -445,7 +517,7 @@ namespace Dissertation
                 if (treatNextAsWord)
                 {
                     addToSearchBar(e.Result.Text);
-                    currentView.getSaveLabel().Hide();
+                    CurrentView.getSaveLabel().Hide();
                     treatNextAsWord = false;
                 }
                 else
@@ -455,9 +527,9 @@ namespace Dissertation
                     filter.LoadGrammar(filterGrammar);
                     filter.SpeechRecognized += filterCheck;
 
-                    currentView.getSearchBox().BackColor = SystemColors.ControlLight;
+                    CurrentView.getSearchBox().BackColor = SystemColors.ControlLight;
 
-                    foreach (TreeNode lvl1Node in currentView.getTreeView().Nodes)
+                    foreach (TreeNode lvl1Node in CurrentView.getTreeView().Nodes)
                     {
                         lvl1Node.BackColor = SystemColors.Window;
                         foreach (TreeNode lvl2Node in lvl1Node.Nodes)
@@ -471,7 +543,7 @@ namespace Dissertation
                         }
                     }
 
-                    currentView.getTreeView().BackColor = SystemColors.Window;
+                    CurrentView.getTreeView().BackColor = SystemColors.Window;
                     dict.RecognizeAsyncStop();
                     filter.RecognizeAsync(RecognizeMode.Multiple);
                     return;
@@ -484,13 +556,13 @@ namespace Dissertation
                 {
 
                     addToSearchBar(e.Result.Text);
-                    currentView.getSaveLabel().Hide();
+                    CurrentView.getSaveLabel().Hide();
                     treatNextAsWord = false;
                 }
                 else
                 {
-                    currentView.getSaveLabel().Text = "Please speak your word.";
-                    currentView.getSaveLabel().Show();
+                    CurrentView.getSaveLabel().Text = "Please speak your word.";
+                    CurrentView.getSaveLabel().Show();
                     treatNextAsWord = true;
                 }
             }
@@ -501,13 +573,13 @@ namespace Dissertation
                 {
 
                     addToSearchBar(e.Result.Text);
-                    currentView.getSaveLabel().Hide();
+                    CurrentView.getSaveLabel().Hide();
                     treatNextAsWord = false;
                 }
                 else
                 {
                     //Console.WriteLine(getWords());
-                    if (currentView.getSearchBox().Text == "")
+                    if (CurrentView.getSearchBox().Text == "")
                     {
                         CurrentView.getSaveLabel().Show();
                         CurrentView.getSaveLabel().Text = "Please enter a search criteria";
@@ -536,18 +608,18 @@ namespace Dissertation
                 {
 
                     addToSearchBar(e.Result.Text);
-                    currentView.getSaveLabel().Hide();
+                    CurrentView.getSaveLabel().Hide();
                     treatNextAsWord = false;
                 }
                 else
                 {
-                    string[] searchTerms = currentView.getSearchBox().Text.Split(new char[] { ' ' });
-                    currentView.getSearchBox().Text = "";
-                    
+                    string[] searchTerms = CurrentView.getSearchBox().Text.Split(new char[] { ' ' });
+                    CurrentView.getSearchBox().Text = "";
+
                     if (searchTerms.Length != 0)
                     {
                         Console.WriteLine("Removed \"" + searchTerms.Last() + "\"");
-                        for(int i = 0; i < searchTerms.Length - 1; i++)
+                        for (int i = 0; i < searchTerms.Length - 1; i++)
                         {
                             addToSearchBar(searchTerms[i]);
                         }
@@ -559,7 +631,7 @@ namespace Dissertation
             {
 
                 addToSearchBar(e.Result.Text);
-                currentView.getSaveLabel().Hide();
+                CurrentView.getSaveLabel().Hide();
                 treatNextAsWord = false;
             }
         }
@@ -599,13 +671,13 @@ namespace Dissertation
                     intput = "" + i;
                 }
 
-                Label quantityLabel = currentView.getQuantityLabel();
+                Label quantityLabel = CurrentView.getQuantityLabel();
                 quantityLabel.Text = "Recieved: " + intput;
                 quantityLabel.Show();
 
                 int returnValue = int.Parse(intput);
 
-                if(returnValue < 0)
+                if (returnValue < 0)
                 {
                     throw new FormatException();
                 }
@@ -614,12 +686,13 @@ namespace Dissertation
             }
             catch (OverflowException)
             {
-                currentView.getSaveLabel().Text = "Error number to large, please keep it below: " + Int32.MaxValue;
+                CurrentView.getSaveLabel().Text = "Error number to large, please keep it below: " + Int32.MaxValue;
                 Console.WriteLine("Error number to large, please keep it below: " + Int32.MaxValue);
                 return -1;
-            }catch(FormatException)
+            }
+            catch (FormatException)
             {
-                currentView.getSaveLabel().Text = "The input was not a valid number";
+                CurrentView.getSaveLabel().Text = "The input was not a valid number";
                 return -1;
 
             }
@@ -640,23 +713,23 @@ namespace Dissertation
 
             if (intput == "save")
             {
-                currentView.getSaveLabel().Text = "Would you like to save the value?";
+                CurrentView.getSaveLabel().Text = "Would you like to save the value?";
                 Console.WriteLine(min + " : " + max);
                 switch (changing)
                 {
                     case Changes.MINIMUM:
                         if (min < 0)
                         {
-                            currentView.getSaveLabel().Text = "No input was recieved, please try again";
+                            CurrentView.getSaveLabel().Text = "No input was recieved, please try again";
                             return;
                         }
-                        
+
                         break;
 
                     case Changes.MAXIMUM:
                         if (max < 0)
                         {
-                            currentView.getSaveLabel().Text = "No input was recieved, please try again";
+                            CurrentView.getSaveLabel().Text = "No input was recieved, please try again";
                             return;
                         }
 
@@ -758,7 +831,7 @@ namespace Dissertation
 
                     clearVoiceRecognitionEngine(filter);
 
-                    currentView.getTreeView().BackColor = SystemColors.ControlLight;
+                    CurrentView.getTreeView().BackColor = SystemColors.ControlLight;
 
                     start.LoadGrammar(browseGrammar);
                     start.SpeechRecognized += startBrowse;
@@ -774,7 +847,7 @@ namespace Dissertation
                     filter.LoadGrammar(filterValueGrammar);
                     filter.SpeechRecognized += filterValueCheck;
 
-                    currentView.getTreeView().Nodes["PriceNode"].BackColor = SystemColors.ActiveCaption;
+                    CurrentView.getTreeView().Nodes["PriceNode"].BackColor = SystemColors.ActiveCaption;
 
                     currFilter = AllFilters.PRICE;
                     changing = Changes.NONE;
@@ -787,7 +860,7 @@ namespace Dissertation
                     filter.LoadGrammar(filterValueGrammar);
                     filter.SpeechRecognized += filterValueCheck;
 
-                    currentView.getTreeView().Nodes["PagesNode"].BackColor = SystemColors.ActiveCaption;
+                    CurrentView.getTreeView().Nodes["PagesNode"].BackColor = SystemColors.ActiveCaption;
 
                     currFilter = AllFilters.PAGES;
                     changing = Changes.NONE;
@@ -800,12 +873,12 @@ namespace Dissertation
 
                     clearVoiceRecognitionEngine(filter);
 
-                    currentView.getTreeView().BackColor = SystemColors.ControlLight;
+                    CurrentView.getTreeView().BackColor = SystemColors.ControlLight;
 
-                    foreach(TreeNode lvl1Node in currentView.getTreeView().Nodes)
+                    foreach (TreeNode lvl1Node in CurrentView.getTreeView().Nodes)
                     {
                         lvl1Node.BackColor = SystemColors.ControlLight;
-                        foreach(TreeNode lvl2Node in lvl1Node.Nodes)
+                        foreach (TreeNode lvl2Node in lvl1Node.Nodes)
                         {
                             lvl2Node.BackColor = SystemColors.ControlLight;
                             foreach (TreeNode lvl3Node in lvl2Node.Nodes)
@@ -816,7 +889,7 @@ namespace Dissertation
                         }
                     }
 
-                    currentView.getSearchBox().BackColor = SystemColors.Window;
+                    CurrentView.getSearchBox().BackColor = SystemColors.Window;
 
                     filter.RecognizeAsyncStop();
                     dict.RecognizeAsync(RecognizeMode.Multiple);
@@ -831,7 +904,7 @@ namespace Dissertation
 
         void clearAllBackColours()
         {
-            TreeNodeCollection pageAndPrices = currentView.getTreeView().Nodes;
+            TreeNodeCollection pageAndPrices = CurrentView.getTreeView().Nodes;
 
             TreeNodeCollection prices = pageAndPrices["PriceNode"].Nodes;
             TreeNodeCollection pages = pageAndPrices["PagesNode"].Nodes;
@@ -861,7 +934,7 @@ namespace Dissertation
 
         void updateTree()
         {
-            TreeView tree = currentView.getTreeView();
+            TreeView tree = CurrentView.getTreeView();
             TreeNodeCollection prices = tree.Nodes["PriceNode"].Nodes;
             TreeNodeCollection pages = tree.Nodes["PagesNode"].Nodes;
 
@@ -888,16 +961,16 @@ namespace Dissertation
                             numberOfPages.enabled = true;
                             Console.WriteLine("enabled " + currFilter);
                             changing = Changes.NONE;
-                            currentView.getTreeView().Nodes["PagesNode"].Nodes["PagesEnabledNode"].BackColor = SystemColors.ActiveCaption;
-                            currentView.getTreeView().Nodes["PagesNode"].Nodes["PagesEnabledNode"].Nodes["PagesEnabledValueNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PagesNode"].Nodes["PagesEnabledNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PagesNode"].Nodes["PagesEnabledNode"].Nodes["PagesEnabledValueNode"].BackColor = SystemColors.ActiveCaption;
 
                             break;
                         case AllFilters.PRICE:
                             listPrice.enabled = true;
                             Console.WriteLine("enabled " + currFilter);
                             changing = Changes.NONE;
-                            currentView.getTreeView().Nodes["PriceNode"].Nodes["PricesEnabledNode"].BackColor = SystemColors.ActiveCaption;
-                            currentView.getTreeView().Nodes["PriceNode"].Nodes["PricesEnabledNode"].Nodes["PricesEnabledValueNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PriceNode"].Nodes["PricesEnabledNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PriceNode"].Nodes["PricesEnabledNode"].Nodes["PricesEnabledValueNode"].BackColor = SystemColors.ActiveCaption;
 
                             break;
                     }
@@ -913,8 +986,8 @@ namespace Dissertation
                             numberOfPages.enabled = false;
                             Console.WriteLine("disabled " + currFilter);
                             changing = Changes.NONE;
-                            currentView.getTreeView().Nodes["PagesNode"].Nodes["PagesEnabledNode"].BackColor = SystemColors.ActiveCaption;
-                            currentView.getTreeView().Nodes["PagesNode"].Nodes["PagesEnabledNode"].Nodes["PagesEnabledValueNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PagesNode"].Nodes["PagesEnabledNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PagesNode"].Nodes["PagesEnabledNode"].Nodes["PagesEnabledValueNode"].BackColor = SystemColors.ActiveCaption;
                             timer.Start();
 
                             break;
@@ -922,8 +995,8 @@ namespace Dissertation
                             listPrice.enabled = false;
                             Console.WriteLine("disabled " + currFilter);
                             changing = Changes.NONE;
-                            currentView.getTreeView().Nodes["PriceNode"].Nodes["PricesEnabledNode"].BackColor = SystemColors.ActiveCaption;
-                            currentView.getTreeView().Nodes["PriceNode"].Nodes["PricesEnabledNode"].Nodes["PricesEnabledValueNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PriceNode"].Nodes["PricesEnabledNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PriceNode"].Nodes["PricesEnabledNode"].Nodes["PricesEnabledValueNode"].BackColor = SystemColors.ActiveCaption;
                             timer.Start();
 
                             break;
@@ -939,14 +1012,14 @@ namespace Dissertation
                         case AllFilters.PAGES:
                             Console.WriteLine(currFilter + ": " + numberOfPages.enabled);
                             changing = Changes.NONE;
-                            currentView.getTreeView().Nodes["PagesNode"].Nodes["PagesEnabledNode"].BackColor = SystemColors.ActiveCaption;
-                            currentView.getTreeView().Nodes["PagesNode"].Nodes["PagesEnabledNode"].Nodes["PagesEnabledValueNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PagesNode"].Nodes["PagesEnabledNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PagesNode"].Nodes["PagesEnabledNode"].Nodes["PagesEnabledValueNode"].BackColor = SystemColors.ActiveCaption;
                             break;
                         case AllFilters.PRICE:
                             Console.WriteLine(currFilter + ": " + listPrice.enabled);
                             changing = Changes.NONE;
-                            currentView.getTreeView().Nodes["PriceNode"].Nodes["PricesEnabledNode"].BackColor = SystemColors.ActiveCaption;
-                            currentView.getTreeView().Nodes["PriceNode"].Nodes["PricesEnabledNode"].Nodes["PricesEnabledValueNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PriceNode"].Nodes["PricesEnabledNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PriceNode"].Nodes["PricesEnabledNode"].Nodes["PricesEnabledValueNode"].BackColor = SystemColors.ActiveCaption;
                             break;
                     }
                     timer.Start();
@@ -956,8 +1029,8 @@ namespace Dissertation
                     break;
                 case "minimum":
                 case "min":
-                    currentView.getSaveLabel().Show();
-                    currentView.getSaveLabel().Text = "Would you like to change the value?";
+                    CurrentView.getSaveLabel().Show();
+                    CurrentView.getSaveLabel().Text = "Would you like to change the value?";
                     Console.Write("Current minimum is: ");
                     switch (currFilter)
                     {
@@ -969,7 +1042,7 @@ namespace Dissertation
                             filter.LoadGrammar(yesNoGrammar);
                             filter.SpeechRecognized += yesNoCheck;
 
-                            currentView.getTreeView().Nodes["PagesNode"].Nodes["PagesMinimumNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PagesNode"].Nodes["PagesMinimumNode"].BackColor = SystemColors.ActiveCaption;
 
                             choiceOption = YesNoOptions.CHANGE;
 
@@ -982,7 +1055,7 @@ namespace Dissertation
                             filter.LoadGrammar(yesNoGrammar);
                             filter.SpeechRecognized += yesNoCheck;
 
-                            currentView.getTreeView().Nodes["PriceNode"].Nodes["PricesMinimumNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PriceNode"].Nodes["PricesMinimumNode"].BackColor = SystemColors.ActiveCaption;
 
                             choiceOption = YesNoOptions.CHANGE;
 
@@ -991,8 +1064,8 @@ namespace Dissertation
                     return;
                 case "maximum":
                 case "max":
-                    currentView.getSaveLabel().Show();
-                    currentView.getSaveLabel().Text = "Would you like to change the value?";
+                    CurrentView.getSaveLabel().Show();
+                    CurrentView.getSaveLabel().Text = "Would you like to change the value?";
                     Console.Write("Current maximum is: ");
                     switch (currFilter)
                     {
@@ -1004,7 +1077,7 @@ namespace Dissertation
                             filter.LoadGrammar(yesNoGrammar);
                             filter.SpeechRecognized += yesNoCheck;
 
-                            currentView.getTreeView().Nodes["PagesNode"].Nodes["PagesMaximumNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PagesNode"].Nodes["PagesMaximumNode"].BackColor = SystemColors.ActiveCaption;
 
                             choiceOption = YesNoOptions.CHANGE;
 
@@ -1017,7 +1090,7 @@ namespace Dissertation
                             filter.LoadGrammar(yesNoGrammar);
                             filter.SpeechRecognized += yesNoCheck;
 
-                            currentView.getTreeView().Nodes["PriceNode"].Nodes["PricesMaximumNode"].BackColor = SystemColors.ActiveCaption;
+                            CurrentView.getTreeView().Nodes["PriceNode"].Nodes["PricesMaximumNode"].BackColor = SystemColors.ActiveCaption;
 
                             choiceOption = YesNoOptions.CHANGE;
 
@@ -1058,8 +1131,8 @@ namespace Dissertation
                             min = -1;
                             max = -1;
 
-                            currentView.getSaveLabel().Text = "Say save to save changes.";
-                            currentView.getSaveLabel().Show();
+                            CurrentView.getSaveLabel().Text = "Say save to save changes.";
+                            CurrentView.getSaveLabel().Show();
 
                             clearVoiceRecognitionEngine(filter);
 
@@ -1074,17 +1147,17 @@ namespace Dissertation
                             if (changing == Changes.MINIMUM)
                             {
                                 if (currFilter == AllFilters.PAGES)
-                                    currentView.getTreeView().Nodes["PagesNode"].Nodes["PagesMinimumNode"].Nodes["PagesMinimumValueNode"].BackColor = SystemColors.ActiveCaption;
+                                    CurrentView.getTreeView().Nodes["PagesNode"].Nodes["PagesMinimumNode"].Nodes["PagesMinimumValueNode"].BackColor = SystemColors.ActiveCaption;
                                 else
-                                    currentView.getTreeView().Nodes["PriceNode"].Nodes["PricesMinimumNode"].Nodes["PricesMinimumValueNode"].BackColor = SystemColors.ActiveCaption;
+                                    CurrentView.getTreeView().Nodes["PriceNode"].Nodes["PricesMinimumNode"].Nodes["PricesMinimumValueNode"].BackColor = SystemColors.ActiveCaption;
 
                             }
                             else
                             {
                                 if (currFilter == AllFilters.PAGES)
-                                    currentView.getTreeView().Nodes["PagesNode"].Nodes["PagesMaximumNode"].Nodes["PagesMaximumValueNode"].BackColor = SystemColors.ActiveCaption;
+                                    CurrentView.getTreeView().Nodes["PagesNode"].Nodes["PagesMaximumNode"].Nodes["PagesMaximumValueNode"].BackColor = SystemColors.ActiveCaption;
                                 else
-                                    currentView.getTreeView().Nodes["PriceNode"].Nodes["PricesMaximumNode"].Nodes["PricesMaximumValueNode"].BackColor = SystemColors.ActiveCaption;
+                                    CurrentView.getTreeView().Nodes["PriceNode"].Nodes["PricesMaximumNode"].Nodes["PricesMaximumValueNode"].BackColor = SystemColors.ActiveCaption;
                             }
                             break;
                         case "no":
@@ -1095,7 +1168,7 @@ namespace Dissertation
                             clearAllBackColours();
 
 
-                            foreach(Grammar grammar in filter.Grammars)
+                            foreach (Grammar grammar in filter.Grammars)
                             {
                                 Console.WriteLine(grammar.Name + ": " + grammar.Loaded);
                             }
@@ -1127,8 +1200,8 @@ namespace Dissertation
                             filter.LoadGrammar(filterGrammar);
                             filter.SpeechRecognized += filterCheck;
 
-                            currentView.getSaveLabel().Text = "Filters saved";
-                            currentView.getQuantityLabel().Hide();
+                            CurrentView.getSaveLabel().Text = "Filters saved";
+                            CurrentView.getQuantityLabel().Hide();
                             updateTree();
 
                             timer.Start();
@@ -1162,7 +1235,7 @@ namespace Dissertation
                             dict.LoadGrammar(searchingGrammar);
                             dict.LoadGrammar(dictationGrammar);
                             dict.SpeechRecognized += dictSearch;
-                            
+
                             dict.RecognizeAsync(RecognizeMode.Multiple);
                             return;
                     }
@@ -1181,7 +1254,7 @@ namespace Dissertation
 
                             clearVoiceRecognitionEngine(filter);
 
-                            currentView.getSaveLabel().Hide();
+                            CurrentView.getSaveLabel().Hide();
 
                             return;
                     }
@@ -1190,13 +1263,13 @@ namespace Dissertation
         }
 
         public string getWords()
-        {       
-            return currentView.getSearchBox().Text;
+        {
+            return CurrentView.getSearchBox().Text;
         }
 
         public void search()
         {
-            if (currentView.getSearchBox().Text == "")
+            if (CurrentView.getSearchBox().Text == "")
             {
                 CurrentView.getSaveLabel().Show();
                 CurrentView.getSaveLabel().Text = "Please enter a search criteria";
@@ -1213,18 +1286,45 @@ namespace Dissertation
 
                 Query = new Query(getWords(), queryFilters);
 
-                if (currentView is Search_View)
+                if (CurrentView is Search_View)
                 {
                     Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.sv);
                     Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.pv);
+
+                    this.CurrentView = Testing.Program.ms.pv;
                 }
                 else
                 {
-                    ProductView sv = (ProductView)currentView;
+                    ProductView sv = (ProductView)CurrentView;
                     sv.querySearch();
                 }
             }
 
+        }
+
+        public HashSet<Grammar> getLoadedGrammars()
+        {
+            HashSet<Grammar> loadedGrammar = new HashSet<Grammar>();
+
+            Console.WriteLine(start.Grammars.Count);
+            foreach (Grammar g in start.Grammars)
+            {
+                loadedGrammar.Add(g);
+            }
+
+            Console.WriteLine(dict.Grammars.Count);
+            foreach (Grammar g in dict.Grammars)
+            {
+                loadedGrammar.Add(g);
+            }
+
+            Console.WriteLine(filter.Grammars.Count);
+            foreach (Grammar g in filter.Grammars)
+            {
+                loadedGrammar.Add(g);
+            }
+
+            return loadedGrammar;
         }
     }
 }

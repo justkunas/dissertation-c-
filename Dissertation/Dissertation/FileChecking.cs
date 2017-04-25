@@ -11,8 +11,20 @@ namespace Dissertation
     {
         public static void checkForAllSpecifics()
         {
-            string[] xmlToFind = { "firstwords","lastwords" };
-            string[] folders = { "C:\\Users\\Justkunas\\Documents\\Amazon Books\\xml\\999" };
+            string[] xmlToFind = { "blurbers" };
+            string[] folders = { @"C:\Users\Justkunas\Documents\Amazon Books\xml\999" };
+
+            HashSet<string> temp = new HashSet<string>();
+
+            for(int i = 999; i > 499 ; i--)
+            {
+                string folder = @"C:\Users\Justkunas\Documents\Amazon Books\xml\" + i;
+                Console.WriteLine(folder);
+                temp.Add(folder);
+            }
+
+            folders = temp.ToArray();
+
             string[] files;
             HashSet<string> complete = new HashSet<string>();
             char[] illeagalChars = { '.' };
@@ -30,7 +42,7 @@ namespace Dissertation
             DateTime start = DateTime.Now; 
             Console.WriteLine("Files to check:" + total);
             Console.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            Console.ReadKey();
 
             foreach (string folder in folders)
             {
@@ -94,7 +106,7 @@ namespace Dissertation
             DateTime start = DateTime.Now;
             Console.WriteLine("Files to check:" + total);
             Console.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            Console.ReadKey();
 
             foreach(string folder in folders)
             {
@@ -153,7 +165,8 @@ namespace Dissertation
 
             double percent;
             
-            string[] folders = Directory.GetDirectories("C:\\Users\\Justkunas\\Documents\\Amazon Books\\xml");
+            string[] folders = Directory.GetDirectories(@"C:\Users\Justkunas\Documents\Amazon Books\xml");
+            //string[] folders = new string[] { @"C:\Users\Justkunas\Documents\Amazon Books\xml\999"};
             string[] files;
 
             foreach (string folder in folders)
@@ -166,7 +179,7 @@ namespace Dissertation
             DateTime start = DateTime.Now;
             Console.WriteLine("Files to check:" + total);
             Console.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            Console.ReadKey();
 
 
             foreach (string folder in folders)
@@ -191,9 +204,9 @@ namespace Dissertation
 
                     Book book = Book.parseXML(doc);
                     
-                    if(book.Images.Count > max)
+                    if(book.Blurbers.Count > max)
                     {
-                        max = book.Images.Count;
+                        max = book.EditorialReviews.Count;
                         fileWithMost = file;
                     }
 
@@ -254,7 +267,7 @@ namespace Dissertation
             DateTime start = DateTime.Now;
             Console.WriteLine("Files to check:" + total);
             Console.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            Console.ReadKey();
 
 
             foreach (string folder in folders)
