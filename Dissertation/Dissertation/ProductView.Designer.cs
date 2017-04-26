@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("0");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Minimum", new System.Windows.Forms.TreeNode[] {
             treeNode1});
@@ -95,6 +96,8 @@
             this.productLabel6 = new System.Windows.Forms.Label();
             this.productLabel7 = new System.Windows.Forms.Label();
             this.productLabel8 = new System.Windows.Forms.Label();
+            this.loading = new System.Windows.Forms.Label();
+            this.changeLoading = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.item8img)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.item7img)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.item6img)).BeginInit();
@@ -286,6 +289,7 @@
             this.load.TabIndex = 61;
             this.load.Text = "Load";
             this.load.UseVisualStyleBackColor = true;
+            this.load.Visible = false;
             this.load.Click += new System.EventHandler(this.load_Click);
             // 
             // panel1
@@ -553,10 +557,26 @@
             this.productLabel8.TabIndex = 94;
             this.productLabel8.Text = "8";
             // 
+            // loading
+            // 
+            this.loading.AutoSize = true;
+            this.loading.Font = new System.Drawing.Font("Microsoft Sans Serif", 32F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.loading.Location = new System.Drawing.Point(340, 226);
+            this.loading.Name = "loading";
+            this.loading.Size = new System.Drawing.Size(439, 51);
+            this.loading.TabIndex = 95;
+            this.loading.Text = "Loading please wait...";
+            // 
+            // changeLoading
+            // 
+            this.changeLoading.Interval = 1000;
+            this.changeLoading.Tick += new System.EventHandler(this.changeLoading_Tick);
+            // 
             // ProductView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.loading);
             this.Controls.Add(this.productLabel8);
             this.Controls.Add(this.productLabel4);
             this.Controls.Add(this.productLabel7);
@@ -657,5 +677,7 @@
         private System.Windows.Forms.Label productLabel6;
         private System.Windows.Forms.Label productLabel7;
         private System.Windows.Forms.Label productLabel8;
+        private System.Windows.Forms.Label loading;
+        private System.Windows.Forms.Timer changeLoading;
     }
 }

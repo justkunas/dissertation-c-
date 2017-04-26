@@ -18,6 +18,8 @@ namespace Dissertation
         public VoiceRecognition vr;
         public Book book;
 
+        public bool moreImgsBool, reviewsBool, blurbersBool, creatorsBool;
+
         public InformationView()
         {
             InitializeComponent();
@@ -111,14 +113,16 @@ namespace Dissertation
             }
 
             if (book.Images.Count < 2)
+            {
                 moreImages.Hide();
-
-            if (book.Reviews.Count == 0 && book.EditorialReviews.Count == 0)
-                reviews.Hide();
+                moreImgsBool = false;
+            }
+            else
+            {
+                moreImages.Show();
+                moreImgsBool = true;
+            }
             
-            if (book.Creators.Count == 0)
-                creators.Hide();
-
 
             secondaryImage.SizeMode = PictureBoxSizeMode.CenterImage;
 
@@ -164,9 +168,33 @@ namespace Dissertation
                 series.Text = "No series";
             }
 
-            if (book.Creators.ContainsKey("author"))
+            if (book.Creators.ContainsValue("author"))
             {
-                author.Text = book.Creators["author"];
+                string bookAuthor = "";
+
+                foreach(KeyValuePair<string,string> kv in book.Creators)
+                {
+                    if(kv.Value.ToLower() == "author")
+                    {
+                        bookAuthor = kv.Key;
+                        break;
+                    }
+                }
+                author.Text = bookAuthor;
+            }
+            else if (book.Creators.ContainsValue("Author"))
+            {
+                string bookAuthor = "";
+
+                foreach (KeyValuePair<string, string> kv in book.Creators)
+                {
+                    if (kv.Value.ToLower() == "author")
+                    {
+                        bookAuthor = kv.Key;
+                        break;
+                    }
+                }
+                author.Text = bookAuthor;
             }
             else
             {
@@ -214,6 +242,39 @@ namespace Dissertation
             else
             {
                 epigraphs.Text = "No epigraphs";
+            }
+
+            if (book.Blurbers.Count == 0)
+            {
+                blurbers.Hide();
+                blurbersBool = false;
+            }
+            else
+            {
+                blurbers.Show();
+                blurbersBool = true;
+            }
+
+            if (book.Reviews.Count == 0 && book.EditorialReviews.Count == 0)
+            {
+                reviews.Hide();
+                reviewsBool = false;
+            }
+            else
+            {
+                reviews.Show();
+                reviewsBool = true;
+            }
+
+            if (book.Creators.Count == 0)
+            {
+                creators.Hide();
+                creatorsBool = false;
+            }
+            else
+            {
+                creators.Show();
+                creatorsBool = true;
             }
         }
 

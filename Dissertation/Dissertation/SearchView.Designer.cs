@@ -28,32 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("0");
-            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Minimum", new System.Windows.Forms.TreeNode[] {
-            treeNode15});
-            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("10000");
-            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Maximum", new System.Windows.Forms.TreeNode[] {
-            treeNode17});
-            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("false");
-            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Enabled", new System.Windows.Forms.TreeNode[] {
-            treeNode19});
-            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Number of pages", new System.Windows.Forms.TreeNode[] {
-            treeNode16,
-            treeNode18,
-            treeNode20});
-            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("$0");
-            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Minimum", new System.Windows.Forms.TreeNode[] {
-            treeNode22});
-            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("$100000");
-            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Maximum", new System.Windows.Forms.TreeNode[] {
-            treeNode24});
-            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("false");
-            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Enabled", new System.Windows.Forms.TreeNode[] {
-            treeNode26});
-            System.Windows.Forms.TreeNode treeNode28 = new System.Windows.Forms.TreeNode("Prices", new System.Windows.Forms.TreeNode[] {
-            treeNode23,
-            treeNode25,
-            treeNode27});
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("0");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Minimum", new System.Windows.Forms.TreeNode[] {
+            treeNode1});
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("10000");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Maximum", new System.Windows.Forms.TreeNode[] {
+            treeNode3});
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("false");
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Enabled", new System.Windows.Forms.TreeNode[] {
+            treeNode5});
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Number of pages", new System.Windows.Forms.TreeNode[] {
+            treeNode2,
+            treeNode4,
+            treeNode6});
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("$0");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Minimum", new System.Windows.Forms.TreeNode[] {
+            treeNode8});
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("$100000");
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Maximum", new System.Windows.Forms.TreeNode[] {
+            treeNode10});
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("false");
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Enabled", new System.Windows.Forms.TreeNode[] {
+            treeNode12});
+            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Prices", new System.Windows.Forms.TreeNode[] {
+            treeNode9,
+            treeNode11,
+            treeNode13});
             this.searchBox = new System.Windows.Forms.TextBox();
             this.searchBarLabel = new System.Windows.Forms.Label();
             this.filterTree = new System.Windows.Forms.TreeView();
@@ -87,38 +87,38 @@
             this.filterTree.BackColor = System.Drawing.SystemColors.ControlLight;
             this.filterTree.Location = new System.Drawing.Point(473, 208);
             this.filterTree.Name = "filterTree";
-            treeNode15.Name = "PagesMinimumValueNode";
-            treeNode15.Text = "0";
-            treeNode16.Name = "PagesMinimumNode";
-            treeNode16.Tag = "";
-            treeNode16.Text = "Minimum";
-            treeNode17.Name = "PagesMaximumValueNode";
-            treeNode17.Text = "10000";
-            treeNode18.Name = "PagesMaximumNode";
-            treeNode18.Text = "Maximum";
-            treeNode19.Name = "PagesEnabledValueNode";
-            treeNode19.Text = "false";
-            treeNode20.Name = "PagesEnabledNode";
-            treeNode20.Text = "Enabled";
-            treeNode21.Name = "PagesNode";
-            treeNode21.Text = "Number of pages";
-            treeNode22.Name = "PricesMinimumValueNode";
-            treeNode22.Text = "$0";
-            treeNode23.Name = "PricesMinimumNode";
-            treeNode23.Text = "Minimum";
-            treeNode24.Name = "PricesMaximumValueNode";
-            treeNode24.Text = "$100000";
-            treeNode25.Name = "PricesMaximumNode";
-            treeNode25.Text = "Maximum";
-            treeNode26.Name = "PricesEnabledValueNode";
-            treeNode26.Text = "false";
-            treeNode27.Name = "PricesEnabledNode";
-            treeNode27.Text = "Enabled";
-            treeNode28.Name = "PriceNode";
-            treeNode28.Text = "Prices";
+            treeNode1.Name = "PagesMinimumValueNode";
+            treeNode1.Text = "0";
+            treeNode2.Name = "PagesMinimumNode";
+            treeNode2.Tag = "";
+            treeNode2.Text = "Minimum";
+            treeNode3.Name = "PagesMaximumValueNode";
+            treeNode3.Text = "10000";
+            treeNode4.Name = "PagesMaximumNode";
+            treeNode4.Text = "Maximum";
+            treeNode5.Name = "PagesEnabledValueNode";
+            treeNode5.Text = "false";
+            treeNode6.Name = "PagesEnabledNode";
+            treeNode6.Text = "Enabled";
+            treeNode7.Name = "PagesNode";
+            treeNode7.Text = "Number of pages";
+            treeNode8.Name = "PricesMinimumValueNode";
+            treeNode8.Text = "$0";
+            treeNode9.Name = "PricesMinimumNode";
+            treeNode9.Text = "Minimum";
+            treeNode10.Name = "PricesMaximumValueNode";
+            treeNode10.Text = "$100000";
+            treeNode11.Name = "PricesMaximumNode";
+            treeNode11.Text = "Maximum";
+            treeNode12.Name = "PricesEnabledValueNode";
+            treeNode12.Text = "false";
+            treeNode13.Name = "PricesEnabledNode";
+            treeNode13.Text = "Enabled";
+            treeNode14.Name = "PriceNode";
+            treeNode14.Text = "Prices";
             this.filterTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode21,
-            treeNode28});
+            treeNode7,
+            treeNode14});
             this.filterTree.Size = new System.Drawing.Size(154, 244);
             this.filterTree.TabIndex = 2;
             // 
@@ -131,6 +131,7 @@
             this.debugButton.TabIndex = 3;
             this.debugButton.Text = "Debug button";
             this.debugButton.UseVisualStyleBackColor = true;
+            this.debugButton.Visible = false;
             this.debugButton.Click += new System.EventHandler(this.debugButton_Click);
             // 
             // SaveLabel

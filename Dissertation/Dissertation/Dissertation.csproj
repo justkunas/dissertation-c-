@@ -90,12 +90,19 @@
     <Compile Include="InformationView.Designer.cs">
       <DependentUpon>InformationView.cs</DependentUpon>
     </Compile>
+    <Compile Include="IPagedView.cs" />
     <Compile Include="IView.cs" />
     <Compile Include="MainScreen.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainScreen.Designer.cs">
       <DependentUpon>MainScreen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MiscView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MiscView.Designer.cs">
+      <DependentUpon>MiscView.cs</DependentUpon>
     </Compile>
     <Compile Include="ProductView.cs">
       <SubType>UserControl</SubType>
@@ -130,6 +137,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainScreen.resx">
       <DependentUpon>MainScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MiscView.resx">
+      <DependentUpon>MiscView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProductView.resx">
       <DependentUpon>ProductView.cs</DependentUpon>

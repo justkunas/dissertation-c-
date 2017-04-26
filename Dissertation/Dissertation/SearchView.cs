@@ -36,19 +36,27 @@ namespace Dissertation
 
         private void debugButton_Click(object sender, EventArgs e)
         {
-            //FileChecking.checkForAllSpecifics();
-            //*
+            FileChecking.imageCount();
+            
+            /*
+            string file = @"C:\Users\Justkunas\Documents\Amazon Books\xml\716\1435260716.xml";
+
+            Book book = Book.parseXML(XElement.Load(file));
+
+            Console.WriteLine(book.Creators.Count);
+            /*
             string file = @"C:\Users\Justkunas\Documents\Amazon Books\xml\476\0787964476.xml";
             string file2 = @"C:\Users\Justkunas\Documents\Amazon Books\xml\999\0030639999.xml";
             string file3 = @"C:\Users\Justkunas\Documents\Amazon Books\xml\999\0312427999.xml";
             string file4 = @"C:\Users\Justkunas\Documents\Amazon Books\xml\999\0006351999.xml";
 
-            Book book = Book.parseXML(XElement.Load(file));
+            Book book = Book.parseXML(XElement.Load(file4));
 
-            Testing.Program.ms.imgv.Book = book;
+            Testing.Program.ms.mv.Book = book;
 
+            Testing.Program.ms.mv.loadBlurbers();
             Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.sv);
-            Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.imgv);
+            Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.mv);
             //*/
             //FileChecking.imageCount();
 

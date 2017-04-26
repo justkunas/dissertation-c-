@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Dissertation
 {
-    public partial class ReviewView : UserControl
+    public partial class ReviewView : UserControl, IPagedView
     {
         public VoiceRecognition vr;
         Book book;
@@ -238,6 +238,18 @@ namespace Dissertation
         private void nextReview_Click(object sender, EventArgs e)
         {
             nextReviewPage();
+        }
+
+        public void loadNextPage()
+        {
+            nextReviewPage();
+            nextEditorialReviewPage();
+        }
+
+        public void loadPreviousPage()
+        {
+            previousReviewPage();
+            previousEditorialReviewPage();
         }
     }
 }

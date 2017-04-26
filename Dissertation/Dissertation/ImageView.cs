@@ -12,7 +12,7 @@ using System.IO;
 
 namespace Dissertation
 {
-    public partial class ImageView : UserControl
+    public partial class ImageView : UserControl, IPagedView
     {
         public VoiceRecognition vr;
 

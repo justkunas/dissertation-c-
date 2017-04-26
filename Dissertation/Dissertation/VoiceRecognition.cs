@@ -23,13 +23,14 @@ namespace Dissertation
         YesNoOptions choiceOption = YesNoOptions.NONE;
 
         SpeechRecognitionEngine dict, start, filter;
-        Grammar browseGrammar, searchingGrammar, filterGrammar, filterValueGrammar, yesNoGrammar, saveGrammar, numberGrammar, infoGrammar, reviewGrammar;
         DictationGrammar dictationGrammar;
-        string[] filterValueCommands, browseCommands, searchingCommands, filterCommands, yesNoCommands, saveCommands, numberCommands, infoCommands, reviewCommands;
-        EventHandler<SpeechRecognizedEventArgs> startBrowse, dictSearch, dictFilter, filterCheck, filterValueCheck, yesNoCheck, numberCheck, infoCheck, reviewCheck;
+        Grammar browseGrammar, searchingGrammar, filterGrammar, filterValueGrammar, yesNoGrammar, saveGrammar, numberGrammar, infoGrammar, reviewGrammar, pageGrammar;
+        string[] filterValueCommands, browseCommands, searchingCommands, filterCommands, yesNoCommands, saveCommands, numberCommands, infoCommands, reviewCommands, pageCommands;
+        EventHandler<SpeechRecognizedEventArgs> startBrowse, dictSearch, dictFilter, filterCheck, filterValueCheck, yesNoCheck, numberCheck, infoCheck, reviewCheck, pageCheck;
 
         bool treatNextAsWord = false;
         IView currentView;
+        IPagedView loadedPageView;
         Timer timer = new Timer();
 
         int min = -1;
@@ -76,6 +77,7 @@ namespace Dissertation
             numberCommands = new string[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "exit" };
             infoCommands = new string[] { "more", "images", "more images", "reviews", "blurbers", "similar", "similar products", "creators", "exit" };
             reviewCommands = new string[] { "exit", "next editorial review", "previous editorial review", "next review", "previous review" };
+            pageCommands = new string[] { "next", "previous", "exit" };
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -106,6 +108,9 @@ namespace Dissertation
             Choices reviewChoices = new Choices();
             reviewChoices.Add(reviewCommands);
 
+            Choices pageChoices = new Choices();
+            pageChoices.Add(pageCommands);
+
             //---------------------------------------------------------------------------------------------------------------------------------------------------
 
             GrammarBuilder browseBuilder = new GrammarBuilder();
@@ -135,6 +140,9 @@ namespace Dissertation
             GrammarBuilder reviewBuilder = new GrammarBuilder();
             reviewBuilder.Append(reviewChoices);
 
+            GrammarBuilder pageBuilder = new GrammarBuilder();
+            pageBuilder.Append(pageChoices);
+
             //---------------------------------------------------------------------------------------------------------------------------------------------------
 
             browseGrammar = new Grammar(browseBuilder);
@@ -146,6 +154,7 @@ namespace Dissertation
             numberGrammar = new Grammar(numberBuilder);
             infoGrammar = new Grammar(infoBuilder);
             reviewGrammar = new Grammar(reviewBuilder);
+            pageGrammar = new Grammar(pageBuilder);
 
             dictationGrammar = new DictationGrammar();
 
@@ -159,6 +168,7 @@ namespace Dissertation
             numberGrammar.Name = "Number Grammar";
             infoGrammar.Name = "Info Grammar";
             reviewGrammar.Name = "Review Grammar";
+            pageGrammar.Name = "Page Grammar";
             dictationGrammar.Name = "Dictation Grammar";
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -172,8 +182,9 @@ namespace Dissertation
             numberCheck = new EventHandler<SpeechRecognizedEventArgs>(numberCheck_SpeechRecognised);
             infoCheck = new EventHandler<SpeechRecognizedEventArgs>(infoCheck_SpeechRecognised);
             reviewCheck = new EventHandler<SpeechRecognizedEventArgs>(reviewCheck_SpeechRecognised);
+            pageCheck = new EventHandler<SpeechRecognizedEventArgs>(pageCheck_SpeechRecognised);
 
-            events = new EventHandler<SpeechRecognizedEventArgs>[] { startBrowse, dictSearch, dictFilter, filterCheck, filterValueCheck, yesNoCheck, numberCheck, infoCheck, reviewCheck };
+            events = new EventHandler<SpeechRecognizedEventArgs>[] { startBrowse, dictSearch, dictFilter, filterCheck, filterValueCheck, yesNoCheck, numberCheck, infoCheck, reviewCheck, pageCheck };
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -257,9 +268,39 @@ namespace Dissertation
             }
         }
 
+        void pageCheck_SpeechRecognised(object sender, SpeechRecognizedEventArgs e)
+        {
+            Console.WriteLine(e.Result.Text);
+            switch (e.Result.Text)
+            {
+                case "exit":
+                    clearVoiceRecognitionEngine(start);
+                    start.LoadGrammar(infoGrammar);
+                    start.SpeechRecognized += infoCheck;
+
+
+                    if (loadedPageView is ImageView)
+                        Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.imgv);
+                    else
+                        Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.mv);
+
+                    Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.iv);
+
+                    loadedPageView = null;
+                    return;
+                case "next":
+                    loadedPageView.loadNextPage();
+                    return;
+                case "previous":
+                    loadedPageView.loadPreviousPage();
+                    return;
+
+            }
+        }
+
         void reviewCheck_SpeechRecognised(object sender, SpeechRecognizedEventArgs e)
         {
-            
+
             ReviewView rv = Testing.Program.ms.rv;
             switch (e.Result.Text)
             {
@@ -268,7 +309,8 @@ namespace Dissertation
                     start.LoadGrammar(infoGrammar);
                     start.SpeechRecognized += infoCheck;
 
-                    Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.rv);
+                        Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.rv);
+
                     Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.iv);
                     return;
                 case "next editorial review":
@@ -288,33 +330,78 @@ namespace Dissertation
 
         void infoCheck_SpeechRecognised(object sender, SpeechRecognizedEventArgs e)
         {
-            Console.WriteLine(e.Result.Text);
+            InformationView iv = (InformationView)currentView;
+            Console.WriteLine("infoCheck_SpeechRecognised: " + e.Result.Text);
             switch (e.Result.Text)
             {
                 case "more":
                 case "images":
                 case "more images":
+                    if (iv.moreImgsBool)
+                    {
+                        clearVoiceRecognitionEngine(start);
+                        start.LoadGrammar(pageGrammar);
+                        start.SpeechRecognized += pageCheck;
 
+                        Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.iv);
+                        Testing.Program.ms.imgv.Book = Testing.Program.ms.iv.book;
+                        Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.imgv);
+
+                        loadedPageView = Testing.Program.ms.imgv;
+                    }
                     return;
                 case "reviews":
-                    clearVoiceRecognitionEngine(start);
-                    start.LoadGrammar(reviewGrammar);
-                    start.SpeechRecognized += reviewCheck;
+                    if (iv.reviewsBool)
+                    {
+                        clearVoiceRecognitionEngine(start);
+                        start.LoadGrammar(reviewGrammar);
+                        start.SpeechRecognized += reviewCheck;
 
-                    Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.iv);
-                    Testing.Program.ms.rv.Book = Testing.Program.ms.iv.book;
-                    Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.rv);
+                        start.LoadGrammar(pageGrammar);
+                        start.SpeechRecognized += pageCheck;
 
+                        Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.iv);
+                        Testing.Program.ms.rv.Book = Testing.Program.ms.iv.book;
+                        Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.rv);
+
+                        loadedPageView = Testing.Program.ms.rv;
+                    }
                     return;
                 case "blurbers":
+                    if (iv.blurbersBool)
+                    {
+                        clearVoiceRecognitionEngine(start);
+                        start.LoadGrammar(pageGrammar);
+                        start.SpeechRecognized += pageCheck;
 
+                        Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.iv);
+                        Testing.Program.ms.mv.Book = Testing.Program.ms.iv.book;
+
+                        Console.WriteLine(Testing.Program.ms.iv.book.Title);
+                        Console.WriteLine(Testing.Program.ms.iv.book.Blurbers.Count);
+
+                        Testing.Program.ms.mv.loadBlurbers();
+                        Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.mv);
+
+                        loadedPageView = Testing.Program.ms.mv;
+                    }
                     return;
-                case "similar":
-                case "similar products":
+                case "creators":
+                    if (iv.creatorsBool)
+                    {
+                        Console.WriteLine("Creators loading up");
 
-                    return;
-                case "creators:":
+                        clearVoiceRecognitionEngine(start);
+                        start.LoadGrammar(pageGrammar);
+                        start.SpeechRecognized += pageCheck;
 
+                        Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.iv);
+                        Testing.Program.ms.mv.Book = Testing.Program.ms.iv.book;
+                        Testing.Program.ms.mv.loadCreators();
+                        Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.mv);
+
+                        loadedPageView = Testing.Program.ms.mv;
+                    }
                     return;
                 case "exit":
                     clearVoiceRecognitionEngine(start);
@@ -378,10 +465,22 @@ namespace Dissertation
                         start.LoadGrammar(numberGrammar);
                         start.SpeechRecognized += numberCheck;
 
-                        foreach (Label l in ((ProductView)CurrentView).productLabels)
+                        //double difference
+                        if (((ProductView)CurrentView).difference > 0)
                         {
-                            l.Show();
+                            for (int i = 0; i < ((ProductView)CurrentView).productLabels.Length - ((ProductView)CurrentView).difference; i++)
+                            {
+                                ((ProductView)CurrentView).productLabels[i].Show();
+                            }
+                        }else
+                        {
+                            foreach (Label l in ((ProductView)CurrentView).productLabels)
+                            {
+                                l.Show();
+                            }
                         }
+
+                        
                     }
                     return;
                 case "exit":
@@ -1237,6 +1336,8 @@ namespace Dissertation
                             dict.SpeechRecognized += dictSearch;
 
                             dict.RecognizeAsync(RecognizeMode.Multiple);
+
+                            startKeyWordRecogniser();
                             return;
                     }
                     return;
@@ -1297,6 +1398,7 @@ namespace Dissertation
                 {
                     ProductView sv = (ProductView)CurrentView;
                     sv.querySearch();
+                    startKeyWordRecogniser();
                 }
             }
 

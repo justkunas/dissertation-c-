@@ -25,6 +25,7 @@ namespace Testing
         public Search_View sv = new Search_View();
         public InformationView iv = new InformationView();
         public ReviewView rv = new ReviewView();
+        public MiscView mv = new MiscView();
         public ImageView imgv = new ImageView();
         public VoiceRecognition vr;
 
@@ -36,6 +37,7 @@ namespace Testing
             sv.vr = vr;
             iv.vr = vr;
             rv.vr = vr;
+            mv.vr = vr;
             imgv.vr = vr;
             Master.Controls.Add(sv);
         }

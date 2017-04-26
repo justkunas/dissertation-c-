@@ -168,6 +168,18 @@ namespace Dissertation
             string[] folders = Directory.GetDirectories(@"C:\Users\Justkunas\Documents\Amazon Books\xml");
             //string[] folders = new string[] { @"C:\Users\Justkunas\Documents\Amazon Books\xml\999"};
             string[] files;
+            //*
+            HashSet<string> temp = new HashSet<string>();
+
+            for (int i = 999; i > 699; i--)
+            {
+                string folder = @"C:\Users\Justkunas\Documents\Amazon Books\xml\" + i;
+                Console.WriteLine(folder);
+                temp.Add(folder);
+            }
+
+            folders = temp.ToArray();
+            //*/
 
             foreach (string folder in folders)
             {
@@ -201,13 +213,12 @@ namespace Dissertation
                     }
 
                     doc = XElement.Load(file);
-
                     Book book = Book.parseXML(doc);
-                    
-                    if(book.Blurbers.Count > max)
+
+                    if (book.Blurbers.Count > max)
                     {
-                        max = book.EditorialReviews.Count;
                         fileWithMost = file;
+                        max = book.Blurbers.Count;
                     }
 
                 }
@@ -244,11 +255,11 @@ namespace Dissertation
                 doesContain.Add(xml, false);
             }
 
-            string[] folders = Directory.GetDirectories("C:\\Users\\Justkunas\\Documents\\Amazon Books\\xml");
-            /*
+            //string[] folders = Directory.GetDirectories("C:\\Users\\Justkunas\\Documents\\Amazon Books\\xml");
+            //*
             HashSet<string> workFolders = new HashSet<string>();
 
-            for(int i = 800; i > 699; i--)
+            for(int i = 999; i > 699; i--)
             {
                 workFolders.Add("C:\\Users\\Justkunas\\Documents\\Amazon Books\\xml\\" + i);
             }

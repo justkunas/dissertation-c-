@@ -17,10 +17,12 @@ namespace Dissertation
     {
         public int currentPage = 0;
         Query query;
+        int dots = 3;
         public VoiceRecognition vr;
         public SearchEngine se;
 
         public Label[] productLabels;
+        public double difference = 0;
 
         TextBox[] titles;
         Label[] prices;
@@ -32,6 +34,7 @@ namespace Dissertation
             titles = new TextBox[] { item1Title, item2Title, item3Title, item4Title, item5Title, item6Title, item7Title, item8Title };
             prices = new Label[] { item1Price, item2Price, item3Price, item4Price, item5Price, item6Price, item7Price, item8Price };
             imgs = new PictureBox[] { item1img , item2img, item3img, item4img, item5img, item6img, item7img, item8img,};
+            productLabels = new Label[] { productLabel1, productLabel2, productLabel3, productLabel4, productLabel5, productLabel6, productLabel7, productLabel8 };
         }
 
         private void ProductView_Load(object sender, EventArgs e)
@@ -39,9 +42,9 @@ namespace Dissertation
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Product view loaded");
             Console.ForegroundColor = ConsoleColor.White;
+            hideAll();
             vr.CurrentView = this;
 
-            productLabels = new Label[] { productLabel1, productLabel2, productLabel3, productLabel4, productLabel5, productLabel6, productLabel7, productLabel8 };
             foreach(Label l in productLabels)
             {
                 l.Hide();
@@ -58,9 +61,94 @@ namespace Dissertation
 
         public void querySearch()
         {
+            searchBox.BackColor = SystemColors.Control;
+            loading.Text = "Loading, please wait...";
+            loading.Show();
+            hideAll();
+            dots = 0;
+            changeLoading.Start();
+            ThreadStart startThread = new ThreadStart(threadSearch);
+            Thread thread = new Thread(startThread);
+            thread.Start();
+
+        }
+
+        private void threadSearch()
+        {
             se.Query = vr.Query;
             se.search();
+            this.Invoke((MethodInvoker)delegate { threadEnd(); });
+        }
+
+        private void threadEnd()
+        {
+            loading.Hide();
+            showAll();
             refreshScreen(se.Pages[0]);
+            changeLoading.Stop();
+            SaveLabel.Hide();
+        }
+
+        public void hideAll()
+        {
+            search.Hide();
+            searchBox.Hide();
+            SaveLabel.Hide();
+            filterTree.Hide();
+            next.Hide();
+            previous.Hide();
+            load.Hide();
+
+            hideData();
+        }
+
+        public void hideData()
+        {
+            foreach (TextBox tb in titles)
+            {
+                tb.Hide();
+            }
+
+            foreach (Label l in prices)
+            {
+                l.Hide();
+            }
+
+            foreach (PictureBox pb in imgs)
+            {
+                pb.Hide();
+            }
+        }
+
+        public void showData()
+        {
+            foreach (TextBox tb in titles)
+            {
+                tb.Show();
+            }
+
+            foreach (Label l in prices)
+            {
+                l.Show();
+            }
+
+            foreach (PictureBox pb in imgs)
+            {
+                pb.Show();
+            }
+        }
+
+        public void showAll()
+        {
+            search.Show();
+            searchBox.Show();
+            SaveLabel.Show();
+            filterTree.Show();
+            next.Show();
+            previous.Show();
+            //load.Show();
+
+            showData();
         }
 
         public TextBox getSearchBox()
@@ -86,15 +174,27 @@ namespace Dissertation
 
         public void nextPage()
         {
+            hideData();
             if ((currentPage + 1) < se.Pages.Count)
             {
                 currentPage++;
                 refreshScreen(se.Pages[currentPage]);
             }
+            showData();
         }
 
         private void refreshScreen(Book[] books)
         {
+
+            if(books.Length == 0)
+            {
+                loading.Text = "No results found.";
+                loading.Show();
+            }
+
+            difference = 8 - books.Length;
+
+            Console.WriteLine("difference: " + difference);
 
             foreach (Book book in books)
             {
@@ -138,6 +238,24 @@ namespace Dissertation
 
             }
             
+            if (difference > 0)
+            {
+                for (int i = 0; i < difference; i++)
+                {
+                    imgs[7-i].Hide();
+                    titles[7-i].Hide();
+                    prices[7-i].Hide();
+                }
+            }else
+            {
+                for(int i = 0; i < 8; i++)
+                {
+                    imgs[i].Show();
+                    titles[i].Show();
+                    prices[i].Show();
+                }
+            }
+            
         }
 
         private void previous_Click(object sender, EventArgs e)
@@ -147,11 +265,14 @@ namespace Dissertation
 
         public void previousPage()
         {
+            hideData();
             if ((currentPage - 1) >= 0)
             {
                 currentPage--;
                 refreshScreen(se.Pages[currentPage]);
             }
+            showData();
+            SaveLabel.Hide();
         }
 
         public Dictionary<string, object> getItem()
@@ -169,6 +290,22 @@ namespace Dissertation
         public Label getQuantityLabel()
         {
             return quantityLabel;
+        }
+
+        private void changeLoading_Tick(object sender, EventArgs e)
+        {
+            string loadDis = "Loading, please wait";
+            for(int i = 0; i < dots; i++)
+            {
+                loadDis += ".";
+            }
+
+            if (dots == 3)
+                dots = 0;
+            else
+                dots++;
+
+            loading.Text = loadDis;
         }
     }
 }

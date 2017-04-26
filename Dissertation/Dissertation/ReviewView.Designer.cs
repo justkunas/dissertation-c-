@@ -95,6 +95,7 @@
             this.debugButton.TabIndex = 4;
             this.debugButton.Text = "Debug Button";
             this.debugButton.UseVisualStyleBackColor = true;
+            this.debugButton.Visible = false;
             this.debugButton.Click += new System.EventHandler(this.debugButton_Click);
             // 
             // previousER
