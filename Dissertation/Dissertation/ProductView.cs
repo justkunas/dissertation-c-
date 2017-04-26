@@ -24,6 +24,8 @@ namespace Dissertation
         public Label[] productLabels;
         public double difference = 0;
 
+        public int numberOfResults;
+
         TextBox[] titles;
         Label[] prices;
         PictureBox[] imgs;
@@ -185,6 +187,7 @@ namespace Dissertation
 
         private void refreshScreen(Book[] books)
         {
+            numberOfResults = books.Length;
 
             if(books.Length == 0)
             {

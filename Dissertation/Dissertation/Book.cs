@@ -238,6 +238,9 @@ namespace Dissertation
             if (element.Element("label") != null)
                 book.Label = element.Element("label").Value;
 
+            if (element.Element("numberofpages") != null)
+                int.TryParse(element.Element("numberofpages").Value, out book.numberOfPages);
+
             if (element.Element("listprice") != null)
                 book.ListPrice = element.Element("listprice").Value;
 

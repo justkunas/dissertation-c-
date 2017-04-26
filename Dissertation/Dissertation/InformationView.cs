@@ -156,6 +156,17 @@ namespace Dissertation
                 edition.Text = "No edition";
             }
 
+            Console.WriteLine(book.NumberOfPages);
+            if(book.NumberOfPages > 0)
+            {
+                numberOfPages.Show();
+                numberOfPages.Text = "" + book.NumberOfPages;
+            }
+            else
+            {
+                numberOfPages.Hide();
+            }
+
             if (book.Series.Count > 0)
             {
                 foreach (string s in book.Series)

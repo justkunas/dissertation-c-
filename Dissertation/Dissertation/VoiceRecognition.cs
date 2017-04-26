@@ -432,21 +432,31 @@ namespace Dissertation
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine((CurrentView is ProductView));
                 if (CurrentView is ProductView)
                 {
                     ProductView pv = ((ProductView)CurrentView);
-                    Testing.Program.ms.iv.loadBook(pv.se.Pages[pv.currentPage][numberRepresentation[e.Result.Text] - 1]);
-                    Console.WriteLine((numberRepresentation[e.Result.Text] - 1));
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine(pv.numberOfResults + " : " + numberRepresentation[e.Result.Text]);
+                    if (pv.numberOfResults >= numberRepresentation[e.Result.Text])
+                    {
+                        currentView.getSaveLabel().Hide();
+                        Testing.Program.ms.iv.loadBook(pv.se.Pages[pv.currentPage][numberRepresentation[e.Result.Text] - 1]);
+                        Console.WriteLine((numberRepresentation[e.Result.Text] - 1));
 
-                    Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.pv);
-                    Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.iv);
+                        Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.pv);
+                        Testing.Program.ms.Master.Controls.Add(Testing.Program.ms.iv);
 
-                    this.CurrentView = Testing.Program.ms.iv;
+                        this.CurrentView = Testing.Program.ms.iv;
 
-                    start.LoadGrammar(infoGrammar);
-                    start.SpeechRecognized += infoCheck;
+                        start.LoadGrammar(infoGrammar);
+                        start.SpeechRecognized += infoCheck;
+                    }else
+                    {
+                        start.LoadGrammar(browseGrammar);
+                        start.SpeechRecognized += startBrowse;
+                        currentView.getSaveLabel().Text = "Not enough search results";
+                        currentView.getSaveLabel().Show();
+                    }
                 }
                 Console.ForegroundColor = ConsoleColor.White;
             }

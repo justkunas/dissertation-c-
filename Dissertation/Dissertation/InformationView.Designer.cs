@@ -36,7 +36,7 @@
             this.series = new System.Windows.Forms.TextBox();
             this.author = new System.Windows.Forms.TextBox();
             this.price = new System.Windows.Forms.TextBox();
-            this.readingLevel = new System.Windows.Forms.TextBox();
+            this.numberOfPages = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.awards = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -46,6 +46,7 @@
             this.blurbers = new System.Windows.Forms.Button();
             this.secondaryImage = new System.Windows.Forms.PictureBox();
             this.debugButton = new System.Windows.Forms.Button();
+            this.readingLevel = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.mainImage)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -153,20 +154,20 @@
             this.price.Text = "Price";
             this.price.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // readingLevel
+            // numberOfPages
             // 
-            this.readingLevel.BackColor = System.Drawing.SystemColors.Control;
-            this.readingLevel.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.readingLevel.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.readingLevel.Enabled = false;
-            this.readingLevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.readingLevel.Location = new System.Drawing.Point(585, 293);
-            this.readingLevel.Multiline = true;
-            this.readingLevel.Name = "readingLevel";
-            this.readingLevel.Size = new System.Drawing.Size(354, 55);
-            this.readingLevel.TabIndex = 8;
-            this.readingLevel.Text = "Reading Level";
-            this.readingLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.numberOfPages.BackColor = System.Drawing.SystemColors.Control;
+            this.numberOfPages.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.numberOfPages.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.numberOfPages.Enabled = false;
+            this.numberOfPages.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.numberOfPages.Location = new System.Drawing.Point(590, 273);
+            this.numberOfPages.Multiline = true;
+            this.numberOfPages.Name = "numberOfPages";
+            this.numberOfPages.Size = new System.Drawing.Size(354, 55);
+            this.numberOfPages.TabIndex = 8;
+            this.numberOfPages.Text = "Number of pages";
+            this.numberOfPages.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // panel1
             // 
@@ -258,6 +259,21 @@
             this.debugButton.Visible = false;
             this.debugButton.Click += new System.EventHandler(this.debugButton_Click);
             // 
+            // readingLevel
+            // 
+            this.readingLevel.BackColor = System.Drawing.SystemColors.Control;
+            this.readingLevel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.readingLevel.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.readingLevel.Enabled = false;
+            this.readingLevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.readingLevel.Location = new System.Drawing.Point(590, 295);
+            this.readingLevel.Multiline = true;
+            this.readingLevel.Name = "readingLevel";
+            this.readingLevel.Size = new System.Drawing.Size(354, 55);
+            this.readingLevel.TabIndex = 8;
+            this.readingLevel.Text = "Reading Level";
+            this.readingLevel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // InformationView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -270,6 +286,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.readingLevel);
+            this.Controls.Add(this.numberOfPages);
             this.Controls.Add(this.price);
             this.Controls.Add(this.author);
             this.Controls.Add(this.series);
@@ -302,7 +319,7 @@
         private System.Windows.Forms.TextBox series;
         private System.Windows.Forms.TextBox author;
         private System.Windows.Forms.TextBox price;
-        private System.Windows.Forms.TextBox readingLevel;
+        private System.Windows.Forms.TextBox numberOfPages;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox awards;
         private System.Windows.Forms.Panel panel2;
@@ -312,5 +329,6 @@
         private System.Windows.Forms.Button blurbers;
         private System.Windows.Forms.PictureBox secondaryImage;
         private System.Windows.Forms.Button debugButton;
+        private System.Windows.Forms.TextBox readingLevel;
     }
 }
