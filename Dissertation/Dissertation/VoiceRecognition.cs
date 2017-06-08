@@ -7,6 +7,8 @@ using System.Speech;
 using System.Speech.Recognition;
 using System.Windows.Forms;
 using System.Drawing;
+using static Dissertation.LuceneCommand;
+using Newtonsoft.Json;
 
 namespace Dissertation
 {
@@ -44,6 +46,8 @@ namespace Dissertation
         Query query;
 
         EventHandler<SpeechRecognizedEventArgs>[] events;
+
+        LuceneCommand command;
 
         Dictionary<string, long> numberRepresentation = new Dictionary<string, long>
         {{"zero",0},{"one",1},{"two",2},{"three",3},{"four",4},
@@ -190,6 +194,7 @@ namespace Dissertation
 
             //---------------------------------------------------------------------------------------------------------------------------------------------------
 
+            //*
             start.SetInputToDefaultAudioDevice();
             dict.SetInputToDefaultAudioDevice();
             filter.SetInputToDefaultAudioDevice();
@@ -199,7 +204,19 @@ namespace Dissertation
             timer.Interval = 5000;
             timer.Tick += setAllNodesBackColour;
 
+            //*/
+        }
 
+        public LuceneCommand Command
+        {
+            get
+            {
+                return command;
+            }
+            set
+            {
+                command = value;
+            }
         }
 
         public IView CurrentView
@@ -1380,6 +1397,7 @@ namespace Dissertation
 
         public void search()
         {
+            Console.WriteLine("loading search()");
             if (CurrentView.getSearchBox().Text == "")
             {
                 CurrentView.getSaveLabel().Show();
@@ -1396,7 +1414,10 @@ namespace Dissertation
                 filter.RecognizeAsyncStop();
 
                 Query = new Query(getWords(), queryFilters);
+                Command = new LuceneCommand(Commands.QUERY,Query, Util.SERVER_IP, Util.SERVER_PORT);
 
+                Console.WriteLine(JsonConvert.SerializeObject(Command));
+                
                 if (CurrentView is Search_View)
                 {
                     Testing.Program.ms.Master.Controls.Remove(Testing.Program.ms.sv);

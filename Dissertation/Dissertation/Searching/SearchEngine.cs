@@ -7,6 +7,10 @@ using System.Web.Script.Serialization;
 using System.Xml.Linq;
 using System.Windows.Forms;
 using System.Threading;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using static Dissertation.LuceneCommand;
+using System.Xml;
 
 namespace Dissertation.Searching
 {
@@ -15,6 +19,7 @@ namespace Dissertation.Searching
     {
 
         Query query, lastQuery;
+        LuceneCommand command;
         string[] queryResults;
         HashSet<string> dataReader = new HashSet<string>();
         HashSet<string> errReader = new HashSet<string>();
@@ -39,7 +44,10 @@ namespace Dissertation.Searching
         private void outputReader(object sender, DataReceivedEventArgs e)
         {
             if (e.Data != null && e.Data.ToString() != null)
+            {
                 dataReader.Add(e.Data.ToString());
+                Console.WriteLine("outputReader: " + e.Data.ToString());
+            }
         }
 
         private void errorReader(object sender, DataReceivedEventArgs e)
@@ -50,122 +58,133 @@ namespace Dissertation.Searching
 
         public void search()
         {
+            Console.WriteLine(Command);
+
             dataReader.Clear();
             errReader.Clear();
             pages.Clear();
             luceneSearch = new Process();
-            bool dontSkip = (lastQuery.query != Query.query);
 
-            Console.WriteLine(lastQuery.query == Query.query);
+            QueryResults = null;
+            Console.WriteLine("=-=-=-=-=-=-=-=-=-=-=-=-=Searching=-=-=-=-=-=-=-=-=-=-=-=-=");
+            string jarLoc = "";
+            //string jarLoc = "C:\\Users\\Justkunas\\Documents\\"
 
-            if (dontSkip)
+            var startInfo = new ProcessStartInfo("java", "-jar " + jarLoc + "LuceneClient.jar " + JsonConvert.SerializeObject(Command))
             {
-                QueryResults = null;
-                Console.WriteLine("=-=-=-=-=-=-=-=-=-=-=-=-=Searching=-=-=-=-=-=-=-=-=-=-=-=-=");
-                JavaScriptSerializer jss = new JavaScriptSerializer();
-                string jarLoc = "";
-                //string jarLoc = "C:\\Users\\Justkunas\\Documents\\"
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+            };
 
-                var startInfo = new ProcessStartInfo("java", "-jar " + jarLoc + "LuceneSearch.jar " + jss.Serialize(Query))
-                {
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                };
+            luceneSearch.StartInfo = startInfo;
+            luceneSearch.OutputDataReceived += outputReader;
+            luceneSearch.ErrorDataReceived += errorReader;
+            luceneSearch.Start();
+            luceneSearch.BeginOutputReadLine();
+            luceneSearch.BeginErrorReadLine();
 
-                luceneSearch.StartInfo = startInfo;
-                luceneSearch.OutputDataReceived += outputReader;
-                luceneSearch.ErrorDataReceived += errorReader;
-                luceneSearch.Start();
-                luceneSearch.BeginOutputReadLine();
-                luceneSearch.BeginErrorReadLine();
+            luceneSearch.WaitForExit();
+            Console.WriteLine("Exited");
+            lastQuery = Query;
 
-                luceneSearch.WaitForExit();
-                Console.WriteLine("Exited");
-                lastQuery = Query;
+            luceneSearch.OutputDataReceived -= outputReader;
+            luceneSearch.ErrorDataReceived -= errorReader;
 
-                luceneSearch.OutputDataReceived -= outputReader;
-                luceneSearch.ErrorDataReceived -= errorReader;
+            luceneSearch.CancelOutputRead();
+            luceneSearch.CancelErrorRead();
+            
+            QueryResults = dataReader.ToArray();
 
-                luceneSearch.CancelOutputRead();
-                luceneSearch.CancelErrorRead();
+
+            foreach(string s in errReader)
+            {
+                Console.Error.WriteLine(s);
             }
 
-            if (dontSkip)
-                QueryResults = dataReader.ToArray();
+            Console.WriteLine("=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+            Console.WriteLine("\"" + QueryResults[0] + "\"");
+            Console.WriteLine("Size: " + (QueryResults[0].Length));
 
-            Console.WriteLine(Query.filters.listprice.enabled || Query.filters.numberofpages.enabled);
-            if (Query.filters.listprice.enabled || Query.filters.numberofpages.enabled)
+            JObject jsonResults = null;
+
+            if (QueryResults.Length != 0 && QueryResults[0].Length != 0)
+                jsonResults = JObject.Parse(QueryResults.ElementAt(0));
+
+            if (QueryResults.Length == 0 || jsonResults == null)
             {
-                Console.WriteLine("Checking filters");
-                HashSet<string> filteredResults = new HashSet<string>();
-                foreach(string s in QueryResults)
+                Console.WriteLine("Loading blank dictionary.");
+                pages = new Dictionary<int, Book[]>();
+                pages[0] = new Book[0];
+            }
+            else
+            {
+                Console.WriteLine("Sorting results");
+                JArray jArr = (JArray)jsonResults["results"];
+
+                QueryResults = new string[jArr.Count];
+                for (int i = 0; i < jArr.Count; i++)
                 {
-                    Book book = Book.parseXML(XElement.Load(s));
-
-                    int min = Query.filters.listprice.min;
-                    int max = Query.filters.listprice.max;
-                    bool meetRequirements = true;
-
-                    if (Query.filters.listprice.enabled)
-                        meetRequirements &= (min <= book.ListPriceValue) && (book.ListPriceValue <= max);
-
-                    min = Query.filters.numberofpages.min;
-                    max = Query.filters.numberofpages.max;
-
-                    if (Query.filters.numberofpages.enabled)
-                        meetRequirements &= (min <= book.NumberOfPages) && (book.NumberOfPages <= max);
-
-                    if (meetRequirements)
-                        filteredResults.Add(s);
+                    QueryResults[i] = jArr.ElementAt(i).ToString();
                 }
-                QueryResults = filteredResults.ToArray();
-            } else
-            {
-                Console.WriteLine("skipping filters");
-            }
 
-            string path = "";
-            int lastPage = 0;
+                string path = "";
+                int lastPage = 0;
 
-            Console.WriteLine(QueryResults.Length);
+                Console.WriteLine(QueryResults.Length);
 
-            if (QueryResults.Length > 8)
-            {
-                for (int i = 0; i < (QueryResults.Length / 8); i++)
+                if (QueryResults.Length > 8)
                 {
-                    Book[] entry = new Book[8];
-                    for (int j = 0 + (i * 8); j < 8 + (i * 8); j++)
+                    for (int i = 0; i < (QueryResults.Length / 8); i++)
                     {
-                        entry[j - (i * 8)] = Book.parseXML(XElement.Load(QueryResults[j]));
-                        path = QueryResults[j];
+                        Book[] entry = new Book[8];
+                        for (int j = 0 + (i * 8); j < 8 + (i * 8); j++)
+                        {
+                            XElement ele = XElement.Load(new XmlNodeReader(JsonConvert.DeserializeXmlNode(QueryResults[i])));
+                            entry[j - (i * 8)] = Book.parseXML(ele);
+                            path = QueryResults[j];
+                        }
+
+
+                        pages[i] = entry;
+                        lastPage = i;
                     }
 
-
-                    pages[i] = entry;
-                    lastPage = i;
+                    Book[] lastEntry = new Book[8];
+                    for (int i = 0; i < 8; i++)
+                    {
+                        string url = QueryResults[QueryResults.Length - (8 - i)];
+                        XElement doc = XElement.Load(url);
+                        lastEntry[i] = Book.parseXML(doc);
+                    }
+                    var keys = pages.Keys;
                 }
-
-                Book[] lastEntry = new Book[8];
-                for (int i = 0; i < 8; i++)
+                else
                 {
-                    string url = QueryResults[QueryResults.Length - (8 - i)];
-                    XElement doc = XElement.Load(url);
-                    lastEntry[i] = Book.parseXML(doc);
+                    Book[] soleEntry = new Book[QueryResults.Length];
+                    for (int i = 0; i < QueryResults.Length; i++)
+                    {
+                        XElement ele = XElement.Load(new XmlNodeReader(JsonConvert.DeserializeXmlNode(QueryResults[i])));
+                        soleEntry[i] = Book.parseXML(ele);
+                    }
+                    pages[0] = soleEntry;
                 }
-                var keys = pages.Keys;
-            }else
-            {
-                Book[] soleEntry = new Book[QueryResults.Length];
-                for(int i = 0; i < QueryResults.Length; i++)
-                {
-                    XElement doc = XElement.Load(QueryResults[i]);
-                    soleEntry[i] = Book.parseXML(doc);
-                }
-                pages[0] = soleEntry;
             }
+            //*/
         }
 
+        public LuceneCommand Command
+        {
+            get
+            {
+                return command;
+            }
+
+            set
+            {
+                command = value;
+            }
+        }
 
         public Query Query
         {

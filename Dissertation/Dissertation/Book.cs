@@ -486,7 +486,9 @@ namespace Dissertation
 
                     if (ele.Attribute("id") != null && ele.Attribute("id").Value != "")
                         id = int.Parse(ele.Attribute("id").Value.Trim(bannedChars));
-                    book.BrowseNodes.Add(id, ele.Value);
+
+                    if(!book.BrowseNodes.ContainsKey(id))
+                        book.BrowseNodes.Add(id, ele.Value);
                 }
             }
 

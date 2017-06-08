@@ -99,7 +99,7 @@ namespace Dissertation
             return filters;
         }
 
-        public void setAllFilters(bool value)
+        public Filters setAllFilters(bool value)
         {
             listprice.enabled = value;
             dimensions.height.enabled = value;
@@ -107,6 +107,8 @@ namespace Dissertation
             dimensions.length.enabled = value;
             dimensions.weight.enabled = value;
             numberofpages.enabled = value;
+
+            return this;
         }
 
         public override string ToString()

@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Book.cs" />
+    <Compile Include="LuceneCommand.cs" />
     <Compile Include="FileChecking.cs" />
     <Compile Include="ImageView.cs">
       <SubType>UserControl</SubType>
@@ -104,6 +105,7 @@
     <Compile Include="MiscView.Designer.cs">
       <DependentUpon>MiscView.cs</DependentUpon>
     </Compile>
+    <Compile Include="ParameterNotFoundException.cs" />
     <Compile Include="ProductView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -127,6 +129,7 @@
     </Compile>
     <Compile Include="Searching\SearchEngine.cs" />
     <Compile Include="Searching\SearchThread.cs" />
+    <Compile Include="Util.cs" />
     <Compile Include="VoiceRecognition.cs" />
     <Compile Include="XmlHandler.cs" />
     <EmbeddedResource Include="ImageView.resx">

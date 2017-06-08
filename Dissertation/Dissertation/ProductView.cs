@@ -10,6 +10,9 @@ using System.Windows.Forms;
 using Dissertation.Searching;
 using System.Web.Script.Serialization;
 using System.Threading;
+using System.Xml.Linq;
+using Newtonsoft.Json;
+using static Dissertation.LuceneCommand;
 
 namespace Dissertation
 {
@@ -25,6 +28,7 @@ namespace Dissertation
         public double difference = 0;
 
         public int numberOfResults;
+        public int tracker = 0;
 
         TextBox[] titles;
         Label[] prices;
@@ -78,6 +82,7 @@ namespace Dissertation
         private void threadSearch()
         {
             se.Query = vr.Query;
+            se.Command = vr.Command;
             se.search();
             this.Invoke((MethodInvoker)delegate { threadEnd(); });
         }
@@ -86,6 +91,8 @@ namespace Dissertation
         {
             loading.Hide();
             showAll();
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+            //XElement xEle = JsonConvert.DeserializeXmlNode(JsonConvert.DeserializeObject());
             refreshScreen(se.Pages[0]);
             changeLoading.Stop();
             SaveLabel.Hide();
@@ -176,13 +183,9 @@ namespace Dissertation
 
         public void nextPage()
         {
-            hideData();
-            if ((currentPage + 1) < se.Pages.Count)
-            {
-                currentPage++;
-                refreshScreen(se.Pages[currentPage]);
-            }
-            showData();
+            tracker++;
+            vr.Command = new LuceneCommand(Commands.NEXT, null, Util.SERVER_IP, Util.SERVER_PORT);
+            querySearch();
         }
 
         private void refreshScreen(Book[] books)
@@ -268,14 +271,12 @@ namespace Dissertation
 
         public void previousPage()
         {
-            hideData();
-            if ((currentPage - 1) >= 0)
+            if (tracker > 0)
             {
-                currentPage--;
-                refreshScreen(se.Pages[currentPage]);
+                tracker--;
+                vr.Command = new LuceneCommand(Commands.PREVIOUS, null, Util.SERVER_IP, Util.SERVER_PORT);
+                querySearch();
             }
-            showData();
-            SaveLabel.Hide();
         }
 
         public Dictionary<string, object> getItem()

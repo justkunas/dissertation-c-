@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Net;
 using System.IO;
 using System.Speech.Recognition;
+using Dissertation.Searching;
+using Newtonsoft.Json;
 
 namespace Dissertation
 {
@@ -29,6 +31,8 @@ namespace Dissertation
         {
             vr.CurrentView = this;
             vr.viewLoaded();
+
+            //SearchEngine se = new SearchEngine();
         }
 
         public void loadBook(Book book)
